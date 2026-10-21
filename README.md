@@ -11,8 +11,8 @@ Patient Management / Report Management 的交互原型（1440×1024 画框，左
 
 ## 文件
 - `index.html` 原型本体（单文件）
-- `screens/` 8 张关键状态截图
+- `screens/` 关键状态截图（列表、搜索、筛选、病人档案、下单提醒）
 - `Manage.png` 当前线上版本的 Figma 参考稿
 
 ## 深链接参数（演示用）
-`?q=chan&type=Omni-Health&status=Available#reports`、`?gender=Female&open=gender#patients`、`?detail=CL-10030#patients`
+`?q=chan&type=Omni-Health&status=Available#reports`、`?gender=Female&open=gender#patients`、`?detail=CL-10127#patients`（病人档案）、`?detail=CL-10127&order=gd#patients`（下单提醒）

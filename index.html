@@ -199,13 +199,47 @@ mark{background:#E1E9FC;color:var(--primary);font-weight:500;border-radius:2px;p
 .p-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 24px;margin-top:18px}
 .p-grid .k{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--text-3)}
 .p-grid .v{font-size:14px;color:var(--text);margin-top:4px}
-.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
-.svc .box{padding:16px 20px 12px;min-height:150px}
-.svc .box h4{font-size:16px;line-height:20px;font-weight:500;color:var(--text);display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.svc .r{display:flex;align-items:center;gap:10px;height:44px;border-top:1px solid var(--border-light);font-size:13px;color:var(--text-2)}
-.svc .r .d{margin-left:auto}
-.svc .r .btn{height:28px;padding:0 8px;font-size:11px}
-.svc .none{font-size:13px;color:var(--text-3);padding:10px 0}
+.hist{margin-top:24px}
+.hist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 20px 16px}
+.hist-head h3{font-size:18px;line-height:24px;font-weight:500;color:var(--text)}
+.hist-sub{font-size:13px;line-height:18px;color:var(--text-2);margin-top:4px}
+.hist-sum{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.hist-sum .tag{height:24px}
+.tag.none{color:var(--text-3);background:var(--disabled-bg);font-weight:400}
+.tag.bt{color:#5C6470;background:#EEF0F4}
+.hist thead th{border-radius:0;border-top:1px solid var(--border-light)}
+.hist tbody tr:last-child td{border-bottom:0}
+tr.other td{color:var(--text-3)}
+tr.other .tag{opacity:.75}
+.by{display:inline-flex;align-items:center;gap:6px}
+.by svg,.locked-note svg{width:14px;height:14px;flex:none}
+.locked-note{font-size:12px;color:var(--text-3);display:inline-flex;align-items:center;gap:6px}
+.rep-cell{font-size:13px}.rep-cell b{font-weight:500;color:var(--text)}.rep-cell.none{color:var(--text-3)}
+.overlay{position:absolute;left:260px;top:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:80;display:flex;align-items:center;justify-content:center}
+.modal{width:600px;background:#fff;border-radius:6px;box-shadow:0 12px 32px 4px #0000000A,0 8px 20px #00000014;padding:16px}
+.m-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.m-title{font-size:18px;line-height:24px;font-weight:500;color:var(--text)}
+.m-sub{font-size:13px;color:var(--text-2);margin-top:2px}
+.m-close{width:28px;height:28px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.m-close svg{width:16px;height:16px}
+.m-close:hover{background:var(--hover);color:var(--text)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:#C9D4F5}
+.opt.sel{border-color:var(--primary);background:#F7F9FF}
+.opt .radio{width:16px;height:16px;border-radius:50%;border:1px solid var(--border);margin-top:1px;flex:none;position:relative;background:#fff}
+.opt.sel .radio{border-color:var(--primary);background:var(--primary)}
+.opt.sel .radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#fff}
+.o-name{font-size:14px;font-weight:500;color:var(--text)}
+.o-desc{font-size:12px;line-height:16px;color:var(--text-2);margin-top:2px;max-width:400px}
+.o-have{margin-left:auto;font-size:12px;color:var(--text-2);white-space:nowrap;padding-top:2px}
+.note{margin-top:14px;border-radius:4px;padding:10px 12px;font-size:13px;line-height:18px;display:flex;gap:8px}
+.note b{font-weight:500}
+.note svg{width:16px;height:16px;flex:none;margin-top:1px}
+.note.info{background:var(--info-bg);color:#1B368F}
+.note.warn{background:var(--warning-bg);color:#8A5200}
+.note.warn svg{color:var(--warning)}
+.m-foot{display:flex;justify-content:flex-end;gap:12px;margin-top:16px}
 
 /* toast */
 .toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%) translateY(8px);background:#303133;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;white-space:nowrap}
@@ -274,7 +308,7 @@ mark{background:#E1E9FC;color:var(--primary);font-weight:500;border-radius:2px;p
 
         <div class="card tcard" id="p-tcard">
           <table>
-            <colgroup><col style="width:249px"><col style="width:179px"><col style="width:210px"><col style="width:170px"><col style="width:124px"><col style="width:168px"></colgroup>
+            <colgroup><col style="width:229px"><col style="width:150px"><col style="width:170px"><col style="width:150px"><col style="width:90px"><col style="width:130px"><col style="width:181px"></colgroup>
             <thead><tr>
               <th><span class="th-btn" data-sort="name">Name<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
               <th><span class="th-btn" data-sort="pid">Patient ID<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
@@ -282,6 +316,7 @@ mark{background:#E1E9FC;color:var(--primary);font-weight:500;border-radius:2px;p
               <th><span class="th-btn" data-sort="dob">Date of Birth<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
               <th><span class="th-btn" data-sort="age">Age<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
               <th><span class="th-btn" data-filter="gender" id="p-f-gender">Gender<svg class="caret" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.9 340.9L512 652.7L192.1 340.9a30.6 30.6 0 0 0-42.7 0a29 29 0 0 0 0 41.6l340.3 331.7a32 32 0 0 0 44.6 0l340.3-331.7a29 29 0 0 0 0-41.7a30.6 30.6 0 0 0-42.7 0z"/></svg></span></th>
+              <th>Reports</th>
             </tr></thead>
             <tbody id="p-body"></tbody>
           </table>
@@ -294,11 +329,11 @@ mark{background:#E1E9FC;color:var(--primary);font-weight:500;border-radius:2px;p
         <div class="page-head">
           <div>
             <h1 class="title">Report Management</h1>
-            <p class="subtitle">View all your patient reports in one place</p>
+            <p class="subtitle">Reports you ordered, across all patients. Open a row for the patient’s full file.</p>
           </div>
           <div class="head-actions">
             <button class="btn plain" data-toast="“Upload body test” page is unchanged in this prototype"><svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-578.3V704h-64V247.3L237.2 490L192 444.8L508.8 128l316.8 316.8l-45.3 45.2z"/></svg>Upload Body Test</button>
-            <button class="btn" data-toast="“New report” (order) flow is unchanged in this prototype"><svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64z"/></svg>New Report</button>
+            <button class="btn plain" data-toast="Opens the patient picker, then the order form (unchanged in this prototype). Ordering from the patient’s file skips the picker."><svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64z"/></svg>New Report</button>
           </div>
         </div>
 
@@ -410,19 +445,25 @@ const patients = NAMES.map((n, i) => {
 const reports = [];
 const start = new Date(2025, 2, 1).getTime(), span = TODAY.getTime() - start;
 patients.forEach(p => {
-  const k = pick([1,1,2,2,2,3,3,4,5]);
+  const k = pick([1,1,2,2,2,3,3,4,5]); let hasGD = false;
   for (let j = 0; j < k; j++) {
-    const r = R(); const t = r < .42 ? TYPES[0] : r < .76 ? TYPES[1] : TYPES[2];
+    const r = R(); let t = r < .42 ? TYPES[0] : r < .76 ? TYPES[1] : TYPES[2];
+    if (t === TYPES[0]) { if (hasGD) t = TYPES[1]; hasGD = true; }   // Gen-Decoder is a one-time test
     const recent = R() < .09;
     const date = recent ? new Date(TODAY.getTime() - R() * 18 * 864e5) : new Date(start + R() * span * .985);
     const daysOld = (TODAY - date) / 864e5;
     let status = "Available";
     if (daysOld < 4) status = "Ordered"; else if (daysOld < 18) status = "In Progress"; else if (R() < .02) status = "In Progress";
-    reports.push({ pid: p.pid, name: p.name, type: t[0], code: t[1], cls: t[2], date, status, patient: p });
+    reports.push({ pid: p.pid, name: p.name, type: t[0], code: t[1], cls: t[2], date, status, patient: p, mine: R() < .72 });
   }
 });
 reports.sort((a, b) => a.date - b.date);
 reports.forEach((r, i) => { r.rid = r.code + "-" + String(r.date.getFullYear()).slice(2) + pad(r.date.getMonth()+1,2) + "-" + pad(i + 1, 4); });
+// Body-test PDFs uploaded for a patient: part of the patient file, not of the ordered-reports worklist
+const bodyTests = [];
+patients.forEach(p => { if (R() < .55) { const c = R() < .3 ? 2 : 1; for (let j = 0; j < c; j++) bodyTests.push({ pid: p.pid, name: p.name, type: "Body Test", code: "BT", cls: "bt", date: new Date(start + R() * span * .98), status: "Available", mine: R() < .75, rid: "\u2014", patient: p }); } });
+// Report Management lists only what this doctor ordered
+const myReports = reports.filter(r => r.mine);
 
 /* =====================================================================
    State — kept per page so that Back / re-entering restores the view
@@ -446,6 +487,9 @@ const ICON = {
   right: '<svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M340.9 149.3a30.6 30.6 0 0 0 0 42.8L652.7 512L341 831.9a30.6 30.6 0 0 0 0 42.7a29 29 0 0 0 41.7 0l331.6-340.3a32 32 0 0 0 0-44.6L382.6 149.4a29 29 0 0 0-41.7 0z"/></svg>',
   download: '<svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.7L780.3 342l45.2 45.2L508.8 704L192 387.2l45.2-45.2L480 584.7V128h64z"/></svg>',
   enter: '<svg viewBox="0 0 26 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3.5A1.5 1.5 0 0 1 10.5 2h12A1.5 1.5 0 0 1 24 3.5v13a1.5 1.5 0 0 1-1.5 1.5h-12A1.5 1.5 0 0 1 9 16.5V13"/><path d="M1 10h12"/><path d="M10 7l3 3-3 3"/><path d="M17 6.5h4M17 10h4M17 13.5h3"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>',
   search: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>'
 };
 
@@ -493,7 +537,7 @@ function openMenu(anchor, container, items, onPick, opts={}){
 }
 document.addEventListener("click", e => { if (openDD && !openDD.el.contains(e.target) && !openDD.anchor.contains(e.target)) closeDD(); });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { closeDD(); const a = document.activeElement; if (a && a.tagName === "INPUT") { if (a.value) { a.value = ""; a.dispatchEvent(new Event("input")); } else a.blur(); } }
+  if (e.key === "Escape") { closeDD(); closeOrder(); const a = document.activeElement; if (a && a.tagName === "INPUT") { if (a.value) { a.value = ""; a.dispatchEvent(new Event("input")); } else a.blur(); } }
   if (e.key === "/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) { e.preventDefault(); const inp = state.route === "reports" ? $("#r-search") : $("#p-search"); if (state.route !== "detail") inp.focus(); }
 });
 
@@ -528,6 +572,7 @@ function markSort(scope, st){
 const P = state.patients;
 const P_TIP = 'Results update as you type. <b>Any part</b> of a name or ID works — word order and letter case don’t matter (e.g. “chan tai”, “tai man”, “CL-100”).';
 const pGet = { name: p => p.name.toLowerCase(), pid: p => p.pid, dob: p => p.dob.getTime(), age: p => p.age, created: p => p.created };
+const repSummary = p => { const all = reports.filter(r => r.pid === p.pid).concat(bodyTests.filter(b => b.pid === p.pid)); if (!all.length) return '<span class="rep-cell none">No reports</span>'; const last = all.reduce((m, r) => r.date > m ? r.date : m, all[0].date); return '<span class="rep-cell"><b>' + all.length + '</b> · last ' + fmtDate(last) + '</span>'; };
 function renderPatients(){
   const toks = tokens(P.q);
   let list = patients.filter(p => (P.gender === "All" || p.gender === P.gender) && (!toks.length || matches(p.name + " " + p.pid + " " + p.identity + " " + p.first + " " + p.last, toks)));
@@ -536,8 +581,8 @@ function renderPatients(){
   const rows = list.slice((P.page - 1) * P.per, P.page * P.per);
   $("#p-body").innerHTML = rows.length ? rows.map(p => '<tr class="row" data-pid="' + p.pid + '">' +
       '<td><span class="name-cell"><span>' + hl(p.name, toks) + '</span><span class="enter" title="Open patient">' + ICON.enter + '</span></span></td>' +
-      '<td>' + hl(p.pid, toks) + '</td><td>' + hl(p.identity, toks) + '</td><td>' + fmtDate(p.dob) + '</td><td>' + p.age + '</td><td>' + p.gender + '</td></tr>').join("")
-    : '<tr><td colspan="6"><div class="empty"><div class="ill">' + ICON.search + '</div>No patients match <b>“' + esc(P.q) + '”</b>' + (P.gender !== "All" ? ' among <b>' + P.gender.toLowerCase() + '</b> patients' : '') + '.<br>Check the spelling, try fewer words, or <button class="link-btn" id="p-reset">clear the search</button></div></td></tr>';
+      '<td>' + hl(p.pid, toks) + '</td><td>' + hl(p.identity, toks) + '</td><td>' + fmtDate(p.dob) + '</td><td>' + p.age + '</td><td>' + p.gender + '</td><td>' + repSummary(p) + '</td></tr>').join("")
+    : '<tr><td colspan="7"><div class="empty"><div class="ill">' + ICON.search + '</div>No patients match <b>“' + esc(P.q) + '”</b>' + (P.gender !== "All" ? ' among <b>' + P.gender.toLowerCase() + '</b> patients' : '') + '.<br>Check the spelling, try fewer words, or <button class="link-btn" id="p-reset">clear the search</button></div></td></tr>';
   // summary + chips
   const filtered = toks.length || P.gender !== "All";
   $("#p-meta").innerHTML = filtered
@@ -569,7 +614,7 @@ function reportTag(r){ return '<span class="tag ' + r.cls + '">' + r.type + '</s
 function statusTag(s){ return '<span class="tag dot ' + STATUS_CLASS[s] + '">' + s + '</span>'; }
 function renderReports(){
   const toks = tokens(Rp.q);
-  const base = reports.filter(r => !toks.length || matches(r.name + " " + r.pid + " " + r.rid + " " + r.patient.identity, toks));
+  const base = myReports.filter(r => !toks.length || matches(r.name + " " + r.pid + " " + r.rid + " " + r.patient.identity, toks));
   const countByStatus = s => base.filter(r => (Rp.type === "All" || r.type === Rp.type) && (s === "All" || r.status === s)).length;
   const countByType = t => base.filter(r => (Rp.status === "All" || r.status === Rp.status) && (t === "All" || r.type === t)).length;
   let list = base.filter(r => (Rp.type === "All" || r.type === Rp.type) && (Rp.status === "All" || r.status === Rp.status));
@@ -584,7 +629,7 @@ function renderReports(){
     : '<tr><td colspan="7"><div class="empty"><div class="ill">' + ICON.search + '</div>No reports match the current search and filters.<br><button class="link-btn" id="r-reset">Clear search and filters</button></div></td></tr>';
   const filtered = toks.length || Rp.type !== "All" || Rp.status !== "All";
   $("#r-meta").innerHTML = filtered
-    ? '<div class="sum"><b>' + total + '</b> of ' + reports.length + ' reports' + (toks.length ? ' match <b>“' + esc(Rp.q) + '”</b>' : '') + '</div><div class="chips">' +
+    ? '<div class="sum"><b>' + total + '</b> of ' + myReports.length + ' reports' + (toks.length ? ' match <b>“' + esc(Rp.q) + '”</b>' : '') + '</div><div class="chips">' +
       (Rp.type !== "All" ? '<span class="chip"><span>Type:</span> ' + Rp.type + '<button data-clear="type" title="Remove">' + ICON.x + '</button></span>' : '') +
       (Rp.status !== "All" ? '<span class="chip"><span>Status:</span> ' + Rp.status + '<button data-clear="status" title="Remove">' + ICON.x + '</button></span>' : '') +
       '<button class="link-btn" id="r-clear-all">Clear all</button></div>'
@@ -621,12 +666,23 @@ function openDetail(pid){
   const p = patients.find(x => x.pid === pid); if (!p) return; const rs = reports.filter(r => r.pid === pid).sort((a, b) => b.date - a.date);
   const initials = (p.first[0] + p.last[0]).toUpperCase();
   const info = [["Patient ID", p.pid],["Name", p.name],["Age", p.age],["Gender", p.gender],["Date of Birth", fmtDate(p.dob)],["Country & Region", p.country],["ID No.", p.identity],["Phone", p.phone]];
-  const row = r => '<div class="r">' + reportTag(r) + statusTag(r.status) + '<span class="d">' + fmtDate(r.date) + '</span><button class="btn plain sm" data-toast="Opens the report detail page (unchanged in this prototype)"' + (r.status === "Available" ? '' : ' disabled') + '>View</button><button class="btn plain sm" data-toast="Downloads the file (not wired in this prototype)"' + (r.status === "Available" ? '' : ' disabled') + '>Download</button></div>';
-  const gen = rs.filter(r => r.type !== "Omni-Health"), omni = rs.filter(r => r.type === "Omni-Health");
+  const hist = rs.concat(bodyTests.filter(b => b.pid === pid)).sort((a, b) => b.date - a.date);
+  const byType = t => hist.filter(x => x.type === t);
+  const sumChip = (label, cls, t) => { const c = byType(t).length; return c ? '<span class="tag ' + cls + '">' + label + ' \u00b7 ' + c + '</span>' : '<span class="tag none">' + label + ' \u00b7 none</span>'; };
+  const canOpen = x => x.mine && x.status === "Available";
+  const hrow = x => '<tr class="hrow' + (x.mine ? '' : ' other') + '">' +
+    '<td>' + reportTag(x) + '</td><td>' + fmtDate(x.date) + '</td><td>' + statusTag(x.status) + '</td>' +
+    '<td><span class="by">' + (x.mine ? 'You' : ICON.lock + 'Other doctor') + '</span></td>' +
+    '<td><span class="rid">' + x.rid + '</span></td>' +
+    '<td>' + (x.mine
+      ? '<div class="actions">' + (x.type === "Body Test" ? '' : '<button class="btn plain sm" data-toast="Opens the report detail page (unchanged in this prototype)"' + (canOpen(x) ? '' : ' disabled') + '>View</button>') + '<button class="btn plain sm icon" title="Download" data-toast="Downloads the file (not wired in this prototype)"' + (canOpen(x) ? '' : ' disabled') + '>' + ICON.download + '</button></div>'
+      : '<span class="locked-note">' + ICON.lock + 'Only the ordering doctor can open this report</span>') + '</td></tr>';
   $("#d-body").innerHTML = '<div class="card p-card"><div class="big-av">' + initials + '</div><div style="flex:1"><div class="p-name">' + esc(p.name) + ' <span class="tag gd">' + p.pid + '</span></div><div class="p-grid">' + info.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join("") + '</div></div></div>' +
-    '<div class="svc"><div class="card box"><h4>Body Test <button class="btn sm" data-toast="“Upload body test” page is unchanged in this prototype">Upload</button></h4><div class="none">No body test uploaded for this patient.</div></div>' +
-    '<div class="card box"><h4>Genetic Report Service</h4>' + (gen.length ? gen.map(row).join("") : '<div class="none">No Gen-Decoder or Epi-Insight report yet.</div>') + '</div>' +
-    '<div class="card box"><h4>Omni-Health Service</h4>' + (omni.length ? omni.map(row).join("") : '<div class="none">No Omni-Health report yet.</div>') + '</div></div>';
+    '<div class="card hist"><div class="hist-head"><div><h3>Report history</h3><div class="hist-sub">Every report on file for this patient, whichever doctor ordered it. You can open the ones you ordered.</div><div class="hist-sum">' + sumChip("Gen-Decoder", "gd", "Gen-Decoder") + sumChip("Epi-Insight", "ei", "Epi-Insight") + sumChip("Omni-Health", "oh", "Omni-Health") + sumChip("Body Test", "bt", "Body Test") + '</div></div>' +
+    '<div class="head-actions"><button class="btn plain" data-toast="\u201cUpload body test\u201d page is unchanged in this prototype">Upload Body Test</button><button class="btn" id="d-new">New Report</button></div></div>' +
+    '<table><colgroup><col style="width:160px"><col style="width:120px"><col style="width:140px"><col style="width:160px"><col style="width:200px"><col style="width:320px"></colgroup><thead><tr><th>Report Type</th><th>Date</th><th>Status</th><th>Ordered By</th><th>Report ID</th><th>Action</th></tr></thead><tbody>' +
+    (hist.length ? hist.map(hrow).join("") : '<tr><td colspan="6"><div class="empty">No reports on file for this patient yet.</div></td></tr>') + '</tbody></table></div>';
+  $("#d-new").addEventListener("click", () => openOrder(pid));
   $("#d-body").querySelectorAll("[data-toast]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); toast(b.dataset.toast); }));
   const prevSt = state[state.prev]; const bits = [];
   if (prevSt.q) bits.push('search “' + prevSt.q + '”'); if (state.prev === "reports") { if (prevSt.type !== "All") bits.push(prevSt.type); if (prevSt.status !== "All") bits.push(prevSt.status.toLowerCase()); } else if (prevSt.gender !== "All") bits.push(prevSt.gender.toLowerCase());
@@ -634,6 +690,48 @@ function openDetail(pid){
   show("detail");
 }
 $("#d-back").addEventListener("click", () => { show(state.prev, true); });
+
+/* ---------- New report: service picker with the re-order rule (Gen-Decoder once, Epi-Insight repeatable) ---------- */
+function openOrder(pid, pre){
+  const p = patients.find(x => x.pid === pid); if (!p) return;
+  const all = reports.filter(r => r.pid === pid);
+  const have = t => all.filter(r => r.type === t).sort((a, b) => b.date - a.date);
+  const monthsAgo = d => Math.max(0, Math.round((TODAY - d) / (30.44 * 864e5)));
+  const who = r => r.mine ? "ordered by you" : "ordered by another doctor";
+  const SVCS = [
+    ["Gen-Decoder", "gd", "Whole-genome report: disease risk, pharmacogenomics and lifestyle. A one-time test, because genetic results do not change."],
+    ["Epi-Insight", "ei", "Epigenetic age and aging-rate report. Meant to be repeated, so change over time can be tracked."],
+    ["Omni-Health", "oh", "Integrated analysis of clinical, genetic and epigenetic profiles with an action plan. Built from the patient\u2019s Gen-Decoder, Epi-Insight and body test."]
+  ];
+  let sel = SVCS.some(x => x[1] === pre) ? pre : "gd";
+  const ov = document.createElement("div"); ov.className = "overlay"; ov.id = "overlay";
+  const render = () => {
+    const svc = SVCS.find(x => x[1] === sel); const prior = have(svc[0]);
+    let note = "", label = "Continue", disabled = false;
+    if (sel === "gd") {
+      if (prior.length) { const r = prior[0]; note = '<div class="note warn">' + ICON.warn + '<div><b>This patient already has a Gen-Decoder report</b> (' + r.status + ' \u00b7 ' + fmtDate(r.date) + ' \u00b7 ' + who(r) + '). Genetic results do not change, so a second test is rarely needed.' + (r.mine ? '' : ' You cannot open that report because another doctor ordered it.') + '</div></div>'; label = "Order anyway"; }
+      else note = '<div class="note info">' + ICON.info + '<div>No Gen-Decoder on file for this patient. This is a one-time test.</div></div>';
+    } else if (sel === "ei") {
+      if (prior.length) { const r = prior[0]; note = '<div class="note info">' + ICON.info + '<div>Last Epi-Insight: ' + fmtDate(r.date) + ' (' + monthsAgo(r.date) + ' months ago \u00b7 ' + r.status + ' \u00b7 ' + who(r) + '). Epigenetic age changes over time, so repeat testing is expected.</div></div>'; }
+      else note = '<div class="note info">' + ICON.info + '<div>No Epi-Insight on file yet. This one will be the patient\u2019s baseline.</div></div>';
+    } else {
+      const gd = have("Gen-Decoder").find(r => r.status === "Available"), ei = have("Epi-Insight").find(r => r.status === "Available");
+      if (gd && ei) note = '<div class="note info">' + ICON.info + '<div>Will link the patient\u2019s latest Gen-Decoder (' + fmtDate(gd.date) + ') and Epi-Insight (' + fmtDate(ei.date) + '). You choose or upload a body test in the next step.</div></div>';
+      else { note = '<div class="note warn">' + ICON.warn + '<div><b>Omni-Health needs an available Gen-Decoder and Epi-Insight report first.</b> This patient is missing ' + (!gd && !ei ? 'both' : !gd ? 'Gen-Decoder' : 'Epi-Insight') + '.</div></div>'; disabled = true; }
+    }
+    ov.innerHTML = '<div class="modal"><div class="m-head"><div><div class="m-title">New report</div><div class="m-sub">for ' + esc(p.name) + ' \u00b7 ' + p.pid + '</div></div><button class="m-close" title="Close">' + ICON.x + '</button></div>' +
+      '<div class="opts">' + SVCS.map(x => { const c = have(x[0]).length; return '<div class="opt' + (x[1] === sel ? ' sel' : '') + '" data-svc="' + x[1] + '"><span class="radio"></span><div><div class="o-name">' + x[0] + '</div><div class="o-desc">' + x[2] + '</div></div><div class="o-have">' + (c ? c + ' on file' : 'none on file') + '</div></div>'; }).join("") + '</div>' + note +
+      '<div class="m-foot"><button class="btn plain" id="o-cancel">Cancel</button><button class="btn" id="o-go"' + (disabled ? ' disabled' : '') + '>' + label + '</button></div></div>';
+    ov.querySelectorAll(".opt").forEach(o => o.addEventListener("click", () => { sel = o.dataset.svc; render(); }));
+    ov.querySelector(".m-close").addEventListener("click", closeOrder);
+    ov.querySelector("#o-cancel").addEventListener("click", closeOrder);
+    ov.querySelector("#o-go").addEventListener("click", () => { closeOrder(); toast("Continues to the order form with patient and service pre-filled (unchanged in this prototype)"); });
+  };
+  render();
+  ov.addEventListener("click", e => { if (e.target === ov) closeOrder(); });
+  $("#frame").appendChild(ov);
+}
+function closeOrder(){ const o = $("#overlay"); if (o) o.remove(); }
 
 function show(route, restore){
   closeDD(); state.route = route;
@@ -658,6 +756,7 @@ if (qs.get("q")) { if (location.hash === "#reports") { Rp.q = qs.get("q"); $("#r
 if (qs.get("type")) Rp.type = qs.get("type"); if (qs.get("status")) Rp.status = qs.get("status"); if (qs.get("gender")) P.gender = qs.get("gender");
 show(location.hash === "#reports" ? "reports" : "patients");
 if (qs.get("detail")) openDetail(qs.get("detail"));
+if (qs.get("order")) setTimeout(() => openOrder(qs.get("detail"), qs.get("order")), 60);
 if (qs.get("open")) setTimeout(() => $({type: "#r-f-type", status: "#r-f-status", gender: "#p-f-gender", rpp: "#rpp-sel"}[qs.get("open")])?.click(), 50);
 </script>
 </body>
