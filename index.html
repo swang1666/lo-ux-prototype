@@ -150,7 +150,6 @@ tbody tr:last-child td{border-bottom:1px solid var(--border-light)}
 .name-cell .enter svg{width:26px;height:20px;display:block}
 .two-line{line-height:18px}
 .two-line .sec{font-size:12px;color:var(--text-3);margin-top:1px}
-mark{background:#E1E9FC;color:var(--primary);font-weight:500;border-radius:2px;padding:0 1px}
 .tag{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:4px;font-size:12px;line-height:1;font-weight:500;white-space:nowrap}
 .tag.gd{color:#264CC8;background:#ECF5FF}
 .tag.ei{color:#6B3FC9;background:#F0EAFB}
@@ -496,16 +495,7 @@ const ICON = {
 /* ---------- search helpers: tokens, any order, case-insensitive, substring ---------- */
 function tokens(q){ return q.toLowerCase().trim().split(/\s+/).filter(Boolean); }
 function matches(hay, toks){ const h = hay.toLowerCase(); return toks.every(t => h.includes(t)); }
-function hl(text, toks){
-  text = String(text); if (!toks.length) return esc(text);
-  const low = text.toLowerCase(); const ranges = [];
-  toks.forEach(t => { let i = 0; while ((i = low.indexOf(t, i)) !== -1) { ranges.push([i, i + t.length]); i += t.length; } });
-  if (!ranges.length) return esc(text);
-  ranges.sort((a, b) => a[0] - b[0]);
-  const merged = [ranges[0]]; for (const r of ranges.slice(1)) { const l = merged[merged.length-1]; if (r[0] <= l[1]) l[1] = Math.max(l[1], r[1]); else merged.push(r); }
-  let out = "", p = 0; merged.forEach(([a, b]) => { out += esc(text.slice(p, a)) + "<mark>" + esc(text.slice(a, b)) + "</mark>"; p = b; });
-  return out + esc(text.slice(p));
-}
+function hl(text, toks){ return esc(text); }   // match highlighting removed at the team's request; fuzzy matching itself is unchanged (see matches())
 
 /* ---------- generic pieces ---------- */
 let toastT; function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2200); }
