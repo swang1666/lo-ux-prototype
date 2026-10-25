@@ -150,6 +150,7 @@ tbody tr:last-child td{border-bottom:1px solid var(--border-light)}
 .name-cell .enter svg{width:26px;height:20px;display:block}
 .two-line{line-height:18px}
 .two-line .sec{font-size:12px;color:var(--text-3);margin-top:1px}
+.type-cell .sec{margin-top:4px;letter-spacing:.2px}
 .tag{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:4px;font-size:12px;line-height:1;font-weight:500;white-space:nowrap}
 .tag.gd{color:#264CC8;background:#ECF5FF}
 .tag.ei{color:#6B3FC9;background:#F0EAFB}
@@ -355,14 +356,13 @@ tr.other .tag{opacity:.75}
 
         <div class="card tcard" id="r-tcard">
           <table>
-            <colgroup><col style="width:210px"><col style="width:130px"><col style="width:150px"><col style="width:130px"><col style="width:140px"><col style="width:180px"><col style="width:160px"></colgroup>
+            <colgroup><col style="width:200px"><col style="width:240px"><col style="width:170px"><col style="width:170px"><col style="width:150px"><col style="width:170px"></colgroup>
             <thead><tr>
-              <th><span class="th-btn" data-sort="name">Patient Name<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
-              <th>Patient ID</th>
               <th><span class="th-btn" data-filter="type" id="r-f-type">Report Type<svg class="caret" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.9 340.9L512 652.7L192.1 340.9a30.6 30.6 0 0 0-42.7 0a29 29 0 0 0 0 41.6l340.3 331.7a32 32 0 0 0 44.6 0l340.3-331.7a29 29 0 0 0 0-41.7a30.6 30.6 0 0 0-42.7 0z"/></svg></span></th>
-              <th><span class="th-btn" data-sort="date">Date<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
+              <th><span class="th-btn" data-sort="name">Patient Name<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
+              <th>Identity ID</th>
+              <th><span class="th-btn" data-sort="date">Collection Date<svg class="sort-ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 20V7.825l-5.6 5.6L4 12l8-8l8 8l-1.4 1.425l-5.6-5.6V20z"/></svg></span></th>
               <th><span class="th-btn" data-filter="status" id="r-f-status">Status<svg class="caret" viewBox="0 0 1024 1024"><path fill="currentColor" d="M831.9 340.9L512 652.7L192.1 340.9a30.6 30.6 0 0 0-42.7 0a29 29 0 0 0 0 41.6l340.3 331.7a32 32 0 0 0 44.6 0l340.3-331.7a29 29 0 0 0 0-41.7a30.6 30.6 0 0 0-42.7 0z"/></svg></span></th>
-              <th>Report ID</th>
               <th>Action</th>
             </tr></thead>
             <tbody id="r-body"></tbody>
@@ -612,11 +612,11 @@ function renderReports(){
   const total = list.length; const pages = Math.max(1, Math.ceil(total / Rp.per)); if (Rp.page > pages) Rp.page = pages;
   const rows = list.slice((Rp.page - 1) * Rp.per, Rp.page * Rp.per);
   $("#r-body").innerHTML = rows.length ? rows.map(r => { const ok = r.status === "Available"; return '<tr class="row" data-pid="' + r.pid + '">' +
-      '<td><div class="two-line"><div style="color:var(--text)">' + hl(r.name, toks) + '</div><div class="sec">' + r.patient.gender + ' · ' + r.patient.age + '</div></div></td>' +
-      '<td>' + hl(r.pid, toks) + '</td><td>' + reportTag(r) + '</td><td>' + fmtDate(r.date) + '</td><td>' + statusTag(r.status) + '</td>' +
-      '<td><span class="rid">' + hl(r.rid, toks) + '</span></td>' +
+      '<td><div class="two-line type-cell"><div>' + reportTag(r) + '</div><div class="sec">' + hl(r.rid, toks) + '</div></div></td>' +
+      '<td><div class="two-line"><div style="color:var(--text)">' + hl(r.name, toks) + '</div><div class="sec">' + hl(r.pid, toks) + '</div></div></td>' +
+      '<td>' + r.patient.identity + '</td><td>' + fmtDate(r.date) + '</td><td>' + statusTag(r.status) + '</td>' +
       '<td><div class="actions"><button class="btn plain sm" data-act="view"' + (ok ? '' : ' disabled') + '>View</button><button class="btn plain sm icon" data-act="dl" title="' + (r.type === "Omni-Health" ? "Download action plan" : "Download PDF") + '"' + (ok ? '' : ' disabled') + '>' + ICON.download + '</button></div></td></tr>'; }).join("")
-    : '<tr><td colspan="7"><div class="empty"><div class="ill">' + ICON.search + '</div>No reports match the current search and filters.<br><button class="link-btn" id="r-reset">Clear search and filters</button></div></td></tr>';
+    : '<tr><td colspan="6"><div class="empty"><div class="ill">' + ICON.search + '</div>No reports match the current search and filters.<br><button class="link-btn" id="r-reset">Clear search and filters</button></div></td></tr>';
   const filtered = toks.length || Rp.type !== "All" || Rp.status !== "All";
   $("#r-meta").innerHTML = filtered
     ? '<div class="sum"><b>' + total + '</b> of ' + myReports.length + ' reports' + (toks.length ? ' match <b>“' + esc(Rp.q) + '”</b>' : '') + '</div><div class="chips">' +
@@ -670,7 +670,7 @@ function openDetail(pid){
   $("#d-body").innerHTML = '<div class="card p-card"><div class="big-av">' + initials + '</div><div style="flex:1"><div class="p-name">' + esc(p.name) + ' <span class="tag gd">' + p.pid + '</span></div><div class="p-grid">' + info.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join("") + '</div></div></div>' +
     '<div class="card hist"><div class="hist-head"><div><h3>Report history</h3><div class="hist-sub">Every report on file for this patient, whichever doctor ordered it. You can open the ones you ordered.</div><div class="hist-sum">' + sumChip("Gen-Decoder", "gd", "Gen-Decoder") + sumChip("Epi-Insight", "ei", "Epi-Insight") + sumChip("Omni-Health", "oh", "Omni-Health") + sumChip("Body Test", "bt", "Body Test") + '</div></div>' +
     '<div class="head-actions"><button class="btn plain" data-toast="\u201cUpload body test\u201d page is unchanged in this prototype">Upload Body Test</button><button class="btn" id="d-new">New Report</button></div></div>' +
-    '<table><colgroup><col style="width:160px"><col style="width:120px"><col style="width:140px"><col style="width:160px"><col style="width:200px"><col style="width:320px"></colgroup><thead><tr><th>Report Type</th><th>Date</th><th>Status</th><th>Ordered By</th><th>Report ID</th><th>Action</th></tr></thead><tbody>' +
+    '<table><colgroup><col style="width:160px"><col style="width:150px"><col style="width:140px"><col style="width:160px"><col style="width:170px"><col style="width:320px"></colgroup><thead><tr><th>Report Type</th><th>Collection Date</th><th>Status</th><th>Ordered By</th><th>Report ID</th><th>Action</th></tr></thead><tbody>' +
     (hist.length ? hist.map(hrow).join("") : '<tr><td colspan="6"><div class="empty">No reports on file for this patient yet.</div></td></tr>') + '</tbody></table></div>';
   $("#d-new").addEventListener("click", () => openOrder(pid));
   $("#d-body").querySelectorAll("[data-toast]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); toast(b.dataset.toast); }));
