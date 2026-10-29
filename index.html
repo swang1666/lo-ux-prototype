@@ -26,9 +26,11 @@ button,input{font-family:inherit}
 body.bare{padding:0}body.bare .stage-cap{display:none}
 .stage-cap{width:1440px;display:flex;justify-content:space-between;align-items:center;color:#9A9DA6;font-size:12px;margin-bottom:10px;letter-spacing:.2px}
 .stage-cap b{color:#D7D9E0;font-weight:500}
-.stage-cap .tabs{display:flex;gap:6px}
-.stage-cap .tabs button{background:#3A3D47;border:1px solid #4A4E5A;color:#D7D9E0;font-size:12px;padding:5px 10px;border-radius:4px;cursor:pointer}
-.stage-cap .tabs button.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.stage-cap .uisw{display:flex;align-items:center;gap:10px}
+.stage-cap .seg{display:flex;padding:2px;background:#3A3D47;border:1px solid #4A4E5A;border-radius:7px}
+.stage-cap .seg button{background:none;border:0;color:#C9CBD3;font-size:12px;padding:5px 12px;border-radius:5px;cursor:pointer}
+.stage-cap .seg button:hover:not(.on){color:#fff}
+.stage-cap .seg button.on{background:var(--primary);color:#fff}
 
 /* ---------- 1440 × 1024 frame ---------- */
 .frame{position:relative;width:1440px;height:1024px;background:var(--bg);overflow:hidden;flex:none;box-shadow:0 24px 70px rgba(0,0,0,.5)}
@@ -378,17 +380,87 @@ tr.other .tag{opacity:.75}
 /* toast */
 .toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%) translateY(8px);background:#303133;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%)}
+
+/* ---------- New UI preview: static Order page (calm neutrals, hairlines, one accent) ---------- */
+body.nu-on #frame{display:none}
+.nu{--n-bg:#F4F4F1;--n-line:#E5E4DF;--n-line-2:#EEEDE9;--n-ink:#17181B;--n-ink-2:#55575F;--n-ink-3:#8B8D94;--n-panel:#F1F0EC;--n-blue-soft:#EAEFFC;background:var(--n-bg);color:var(--n-ink);letter-spacing:-.005em}
+.nu .sidebar{background:transparent}
+.nu .logo{left:28px;top:30px;width:178px}
+.nu .menu{top:90px}
+.nu .mi{height:40px;margin:2px 14px 0;padding-left:12px;border-radius:10px;font-size:14px;font-weight:500;color:var(--n-ink-2);cursor:default}
+.nu .mi:not(.head):hover{background:none}
+.nu .mi .ic{width:20px;height:20px;color:var(--n-ink-3)}
+.nu .mi .ic svg{width:20px !important;height:20px !important}
+.nu .mi .lb{margin-left:12px}
+.nu .mi.head{color:var(--n-ink)}
+.nu .mi.head .ic{color:var(--n-ink-2)}
+.nu .mi.active,.nu .mi.active:hover{background:linear-gradient(to right,#31A3FA,#264CC8);color:#fff;box-shadow:0 8px 18px -8px rgba(38,76,200,.65),inset 0 1px 0 rgba(255,255,255,.18)}
+.nu .mi.active .ic{color:#fff}
+.nu .mi .collapse{width:26px;height:26px;margin-right:0;color:var(--n-ink-3);border:1px solid var(--n-line);border-radius:7px;background:#fff;cursor:default}
+.nu .mi .collapse svg{width:14px;height:14px}
+.nu .divider{height:auto;background:none;margin:28px 14px 8px 26px}
+.nu .divider span{position:static;transform:none;padding:0;background:none;font-size:11px;line-height:16px;font-weight:500;letter-spacing:.08em;color:var(--n-ink-3)}
+.nu .user{left:26px;top:auto;bottom:50px;gap:10px;cursor:default}
+.nu .user .av{width:34px;height:34px;font-size:12px;font-weight:600;color:#6B3A3C}
+.nu .user .nm{font-size:14px;font-weight:500;color:var(--n-ink)}
+.nu .copy{position:absolute;left:28px;bottom:20px;font-size:11px;color:var(--n-ink-3)}
+.nu .sheet{position:absolute;left:260px;top:12px;right:12px;bottom:12px;background:#fff;border:1px solid var(--n-line);border-radius:16px;box-shadow:0 1px 2px rgba(23,24,27,.04),0 10px 30px -18px rgba(23,24,27,.18);padding:30px 44px 0;overflow:hidden}
+.nu .hd{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.nu h1{font-size:40px;line-height:46px;font-weight:400;letter-spacing:-.032em;color:var(--n-ink)}
+.nu .lede{margin-top:8px;font-size:14px;line-height:20px;color:var(--n-ink-2)}
+.nu .who{display:flex;align-items:center;gap:12px;padding:9px 9px 9px 10px;border:1px solid var(--n-line);border-radius:14px}
+.nu .who .av{width:38px;height:38px;border-radius:50%;background:var(--n-blue-soft);color:var(--primary);font-size:13px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;justify-content:center}
+.nu .who .nm{font-size:14px;line-height:20px;font-weight:500}
+.nu .who .meta{font-size:12.5px;line-height:18px;color:var(--n-ink-3)}
+.nu .who .vr{width:1px;height:28px;background:var(--n-line);margin:0 2px 0 10px}
+.nu .ghost{height:32px;padding:0 12px;border:1px solid var(--n-line);border-radius:9px;background:#fff;font-size:13px;font-weight:500;color:var(--n-ink);cursor:default}
+.nu .steps{margin-top:26px;display:flex;align-items:center;gap:32px;border-bottom:1px solid var(--n-line)}
+.nu .stp{position:relative;display:flex;align-items:center;gap:9px;height:44px;font-size:14px;font-weight:500;color:var(--n-ink-3)}
+.nu .stp .k{width:20px;height:20px;border-radius:50%;border:1px solid var(--n-line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--n-ink-3)}
+.nu .stp.on{color:var(--n-ink)}
+.nu .stp.on .k{background:var(--primary);border-color:var(--primary);color:#fff}
+.nu .stp.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--primary)}
+.nu .steps .aside{margin-left:auto;font-size:12.5px;color:var(--n-ink-3)}
+.nu .sec{margin-top:24px;display:flex;align-items:baseline;gap:14px}
+.nu .sec h2{font-size:20px;line-height:26px;font-weight:500;letter-spacing:-.015em}
+.nu .sec p{font-size:13px;line-height:18px;color:var(--n-ink-3)}
+.nu .grid{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.nu .pc{display:flex;flex-direction:column;border:1px solid var(--n-line);border-radius:14px;overflow:hidden;background:#fff}
+.nu .media{position:relative;height:214px;flex:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 95% at 50% 0%,#FBFAF8 0%,var(--n-panel) 72%);border-bottom:1px solid var(--n-line-2)}
+.nu .media img{display:block;height:176px;width:auto;border-radius:3px;box-shadow:0 1px 2px rgba(23,24,27,.08),0 16px 30px -14px rgba(23,24,27,.42)}
+.nu .duo{position:relative;width:232px;height:186px}
+.nu .duo img{position:absolute;top:5px}
+.nu .duo img:first-child{left:6px;transform:rotate(-5deg)}
+.nu .duo img:last-child{right:6px;transform:rotate(4deg)}
+.nu .eb{margin-bottom:3px;font-size:12px;line-height:16px;color:var(--n-ink-3)}
+.nu .pb{flex:1;padding:18px 20px 0}
+.nu .pb h3{font-size:17px;line-height:24px;font-weight:500;letter-spacing:-.012em}
+.nu .pb p{margin-top:6px;font-size:13px;line-height:20px;color:var(--n-ink-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nu .st{margin-top:14px;display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:18px;color:var(--n-ink-2)}
+.nu .st i{flex:none;width:7px;height:7px;margin-top:5.5px;border-radius:50%}
+.nu .st b{font-weight:500;color:var(--n-ink)}
+.nu .st.warn i{background:#E0912A;box-shadow:0 0 0 3px #FBEBD5}
+.nu .st.info i{background:var(--primary);box-shadow:0 0 0 3px var(--n-blue-soft)}
+.nu .st.ok i{background:#2F9E62;box-shadow:0 0 0 3px #DDF2E5}
+.nu .pf{margin-top:16px;padding:14px 16px 14px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--n-line-2)}
+.nu .cost{font-size:12.5px;color:var(--n-ink-3);font-variant-numeric:tabular-nums}
+.nu .cta{height:34px;padding:0 12px 0 14px;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:9px;background:var(--primary);color:#fff;font-size:13px;font-weight:500;cursor:default;box-shadow:0 1px 2px rgba(38,76,200,.25),inset 0 1px 0 rgba(255,255,255,.15)}
+.nu .cta svg{width:14px;height:14px}
+.nu .wide{margin-top:14px;display:grid;grid-template-columns:calc((100% - 40px) / 3) 1fr;border:1px solid var(--n-line);border-radius:14px;overflow:hidden}
+.nu .wide .media{height:190px;border-bottom:0;border-right:1px solid var(--n-line-2)}
+.nu .wide .media img{height:152px}
+.nu .wb{display:flex;align-items:stretch;gap:40px;padding:22px 20px 18px 26px}
+.nu .wb .tx{flex:1;min-width:0;max-width:540px}
+.nu .wb h3{font-size:17px;line-height:24px;font-weight:500;letter-spacing:-.012em}
+.nu .wb p{margin-top:6px;font-size:13px;line-height:20px;color:var(--n-ink-2)}
+.nu .wb .ac{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:10px}
 </style>
 </head>
 <body>
 
 <div class="stage-cap">
-  <div><b>Longevity.Omics</b> · UX prototype v2 · frame 1440 × 1024 · sidebar unchanged, right pane redesigned</div>
-  <div class="tabs">
-    <button data-go="patients" class="on">Patient Management</button>
-    <button data-go="reports">Report Management</button>
-    <button data-go="order">Order</button>
-  </div>
+  <div id="cap-text"><b>Longevity.Omics</b> · UX prototype v2 · frame 1440 × 1024 · sidebar unchanged, right pane redesigned</div>
+  <div class="uisw"><span>UI style</span><div class="seg" role="group" aria-label="UI style"><button data-ui="current" class="on">Current UI</button><button data-ui="new">New UI</button></div></div>
 </div>
 
 <div class="frame" id="frame">
@@ -541,6 +613,9 @@ tr.other .tag{opacity:.75}
   </footer>
   <div class="toast" id="toast"></div>
 </div>
+
+<!-- ========== New UI preview (static, Order page only) ========== -->
+<div class="frame nu" id="frame-nu" hidden></div>
 
 <script>
 /* =====================================================================
@@ -1160,7 +1235,6 @@ function show(route, restore){
   $("#nav-patients").classList.toggle("active", route === "patients" || (route === "detail" && state.prev === "patients"));
   $("#nav-reports").classList.toggle("active", route === "reports" || (route === "detail" && state.prev === "reports"));
   $("#nav-order").classList.toggle("active", route === "order");
-  document.querySelectorAll(".stage-cap .tabs button").forEach(b => b.classList.toggle("on", b.dataset.go === (route === "detail" ? state.prev : route)));
   if (route === "patients") renderPatients(); if (route === "reports") renderReports(); if (route === "order") renderOrder();
   const main = $("#main"); main.style.scrollBehavior = "auto"; main.scrollTop = restore ? (state[route]?.scroll || 0) : 0; main.style.scrollBehavior = "";
   if (location.hash !== "#" + route) history.replaceState(null, "", "#" + route);
@@ -1168,9 +1242,62 @@ function show(route, restore){
 document.querySelectorAll(".mi[data-nav]").forEach(m => m.addEventListener("click", () => {
   const n = m.dataset.nav; if (n === "patients" || n === "reports") show(n, true); else if (n === "order") { orderReset(); closePicker(); show("order"); } else toast("“" + m.querySelector(".lb").textContent + "” is outside the scope of this prototype");
 }));
-document.querySelectorAll(".stage-cap .tabs button").forEach(b => b.addEventListener("click", () => show(b.dataset.go, true)));
 $(".collapse").addEventListener("click", () => toast("Sidebar collapse is unchanged in this prototype"));
 $(".user").addEventListener("click", () => toast("Account page is unchanged in this prototype"));
+
+/* ---------- New UI preview: the Order showcase restyled, static ---------- */
+const NU_PID = "CL-10127";
+const CAP_TEXT = { current: $("#cap-text").innerHTML, new: "<b>Longevity.Omics</b> · New UI preview · Order page only · static mock-up, not clickable" };
+function buildNewUI(){
+  const host = $("#frame-nu"); if (host.dataset.built) return; host.dataset.built = "1";
+  const sb = $("#frame .sidebar").cloneNode(true);
+  sb.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
+  sb.querySelector("clipPath").id = "ugclip-nu"; sb.querySelector("[clip-path]").setAttribute("clip-path", "url(#ugclip-nu)");
+  sb.querySelectorAll('[fill="#F4F5FA"]').forEach(el => el.setAttribute("fill", "#F4F4F1"));
+  sb.querySelectorAll(".mi").forEach(m => m.classList.toggle("active", m.dataset.nav === "order"));
+  sb.insertAdjacentHTML("beforeend", '<div class="copy">\u00a9 2025\u20132026 Quantum Life</div>');
+  const p = patients.find(x => x.pid === NU_PID), all = reports.filter(r => r.pid === p.pid);
+  const latest = (t, av) => all.filter(r => r.type === t && (!av || r.status === "Available")).sort((a, b) => b.date - a.date)[0];
+  const gd = latest("Gen-Decoder"), ei = latest("Epi-Insight"), gdA = latest("Gen-Decoder", true), eiA = latest("Epi-Insight", true);
+  const by = r => r.mine ? "by you" : "by another doctor";
+  const st = (tone, html) => '<div class="st ' + tone + '"><i></i><span>' + html + '</span></div>';
+  const arrow = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+  const cta = '<button class="cta" tabindex="-1">Continue' + arrow + '</button>';
+  const left = k => clinicCredits[k] + " credits left";
+  const tests = [
+    { chip: "One-time test", media: '<img src="' + COVER.gd + '" alt="">', title: "Gen-Decoder",
+      text: "Whole genome sequencing analysis and reporting, tailored for longevity clinicians and medical centres.",
+      st: gd ? st("warn", "<b>Already on file</b> \u00b7 " + fmtDate(gd.date) + " \u00b7 " + by(gd)) : st("info", "<b>Not on file yet</b> for this patient"), cost: left("GenDecoder") },
+    { chip: "Repeatable", media: '<img src="' + COVER.ei + '" alt="">', title: "Epi-Insight",
+      text: "Epigenetic markers of aging, with a precise epigenetic aging clock, aging acceleration and system age predictions.",
+      st: ei ? st("info", "<b>Last done " + fmtDate(ei.date) + "</b> \u00b7 " + agoText(ei.date)) : st("info", "<b>First test</b> \u00b7 this one becomes the baseline"), cost: left("EpiInsight") },
+    { chip: "2 reports \u00b7 1 sample", media: '<div class="duo"><img src="' + COVER.gd + '" alt=""><img src="' + COVER.ei + '" alt=""></div>', title: "Gen-Decoder + Epi-Insight",
+      text: "Congenital genetic background and predicted aging status in one order, for precise and actionable health strategies.",
+      st: gd ? st("warn", "<b>Gen-Decoder already on file</b> \u00b7 " + fmtDate(gd.date)) : st("info", "<b>Neither report on file yet</b>"), cost: "GD " + clinicCredits.GenDecoder + " \u00b7 EI " + clinicCredits.EpiInsight + " credits left" }
+  ];
+  const omniSt = gdA && eiA ? st("ok", "<b>Ready</b> \u00b7 Gen-Decoder " + fmtDate(gdA.date) + " and Epi-Insight " + fmtDate(eiA.date) + " are available") : st("warn", "<b>Needs an available Gen-Decoder and Epi-Insight first</b>");
+  host.innerHTML = '<div class="sheet">' +
+    '<div class="hd"><div><h1>Order</h1><div class="lede">Choose a test or an analysis. You add the sample details in the next step.</div></div>' +
+      '<div class="who"><div class="av">' + esc(p.first[0] + p.last[0]) + '</div><div><div class="nm">' + esc(p.name) + '</div><div class="meta">' + esc(p.pid + " \u00b7 " + p.identity + " \u00b7 " + p.gender + ", " + p.age) + '</div></div><div class="vr"></div><button class="ghost" tabindex="-1">Change</button></div></div>' +
+    '<div class="steps"><div class="stp on"><span class="k">1</span>Choose service</div><div class="stp"><span class="k">2</span>Sample information</div><div class="aside">Step 1 of 2</div></div>' +
+    '<div class="sec"><h2>Tests</h2><p>Need a blood sample. Gen-Decoder is done once; Epi-Insight can be repeated to track change.</p></div>' +
+    '<div class="grid">' + tests.map(c => '<div class="pc"><div class="media">' + c.media + '</div>' +
+      '<div class="pb"><div class="eb">' + c.chip + '</div><h3>' + c.title + '</h3><p>' + c.text + '</p>' + c.st + '</div><div class="pf"><span class="cost">' + c.cost + '</span>' + cta + '</div></div>').join("") + '</div>' +
+    '<div class="sec"><h2>Analysis</h2><p>Built from the patient\u2019s existing Gen-Decoder and Epi-Insight reports. No new sample.</p></div>' +
+    '<div class="wide"><div class="media"><img src="' + COVER.oh + '" alt=""></div>' +
+      '<div class="wb"><div class="tx"><div class="eb">No sample needed</div><h3>Omni-Health</h3><p>Links genetic variations with the related epigenetic changes, supporting personalized health monitoring, disease prevention and targeted therapies.</p>' + omniSt + '</div>' +
+      '<div class="ac"><span class="cost">' + left("OmniHealth") + '</span>' + cta + '</div></div></div>' +
+    '</div>';
+  host.prepend(sb);
+}
+function setUI(mode){
+  const nu = mode === "new"; if (nu) { closeDD(); buildNewUI(); }
+  document.body.classList.toggle("nu-on", nu); $("#frame-nu").hidden = !nu;
+  document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", b.dataset.ui === mode));
+  $("#cap-text").innerHTML = CAP_TEXT[mode];
+  const u = new URL(location.href); if (nu) u.searchParams.set("ui", "new"); else u.searchParams.delete("ui"); history.replaceState(null, "", u);
+}
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => setUI(b.dataset.ui)));
 
 const qs = new URLSearchParams(location.search);
 if (qs.has("bare")) document.body.classList.add("bare");
@@ -1187,6 +1314,7 @@ if (startRoute === "order") {
   if (qs.get("opick")) openPicker(qs.get("opick") === "1" ? "" : qs.get("opick"));
 }
 if (qs.get("detail")) openDetail(qs.get("detail"));
+if (qs.get("ui") === "new") setUI("new");
 if (qs.get("open")) setTimeout(() => $({type: "#r-f-type", status: "#r-f-status", gender: "#p-f-gender", rpp: "#rpp-sel"}[qs.get("open")])?.click(), 50);
 </script>
 </body>

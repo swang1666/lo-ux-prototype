@@ -7,7 +7,8 @@ Patient Management / Report Management / Order 的交互原型（1440×1024 画�
 ## 怎么看
 1. 下载或 clone 本仓库。
 2. 双击 `index.html`，用 Chrome / Edge 打开即可，不需要安装任何东西。
-3. 画框上方可切换 Patient / Report / Order 三个页面；表格行可点进病人详情，再 Back 会保留搜索和筛选。
+3. 用左侧菜单切换 Patient / Report / Order；表格行可点进病人详情，再 Back 会保留搜索和筛选。
+4. 画框右上角的 UI style 开关可在 Current UI 和 New UI 之间切换。
 
 ## 页面状态
 - **Patient、Report**：已按会议结论改过的新版。
@@ -17,12 +18,14 @@ Patient Management / Report Management / Order 的交互原型（1440×1024 画�
   - Gen-Decoder 已有一份时，点 CONTINUE 会弹出提醒，可以选择仍然下单，不会被拦。
   - Omni-Health 缺少可用的 Gen-Decoder 或 Epi-Insight、或额度用完时，按钮置灰，原因写在卡片上。
   - 下单提交后，新订单会出现在 Report Management 顶部和病人档案里（只保存在当前页面，刷新即恢复）。
+- **New UI（视觉升级预览）**：只做了 Order 第一步这一页，是静态展示稿，不能点击。左侧菜单一起换了新风格，主色和菜单选中的蓝色渐变保持不变。示例病人为 Ahmad bin Hassan（CL-10127）。
 
 ## 文件
 - `index.html` 原型本体（单文件）
-- `screens/` 关键状态截图（列表、搜索、筛选、病人档案、Order 卡片提示与提醒、Order 各步骤）
+- `screens/` 关键状态截图（列表、搜索、筛选、病人档案、Order 卡片提示与提醒、Order 各步骤；`09` 与 `16` 是同一页面的新旧风格对比）
 - `Manage.png` 当前线上版本的 Figma 参考稿
 
 ## 深链接参数（演示用）
 - Patient / Report：`?q=chan&type=Omni-Health&status=Available#reports`、`?gender=Female&open=gender#patients`、`?detail=CL-10127#patients`（病人档案）
 - Order：`#order`（第一步）、`?op=CL-10127#order`（卡片提示，已有 Gen-Decoder）、`?op=CL-10030#order`（Omni-Health 缺前置）、`?opick=1#order`（选病人弹窗）、`?op=CL-10030&os=Gen-Decoder#order`（第二步）、`?op=CL-10127&os=Omni-Health#order`（Omni-Health 表单）
+- New UI：`?ui=new#order`（直接打开新风格的 Order 页面）
