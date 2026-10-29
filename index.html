@@ -445,7 +445,7 @@ tr.other .tag{opacity:.75}
         <div class="page-head">
           <div>
             <h1 class="title">Report Management</h1>
-            <p class="subtitle">Reports you ordered, across all patients. Open a row for the patient’s full file.</p>
+            <p class="subtitle">Reports you ordered and body tests you uploaded, across all patients. Open a row for the patient’s full file.</p>
           </div>
           <div class="head-actions">
             <button class="btn plain" data-toast="“Upload body test” page is unchanged in this prototype"><svg viewBox="0 0 1024 1024"><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-578.3V704h-64V247.3L237.2 490L192 444.8L508.8 128l316.8 316.8l-45.3 45.2z"/></svg>Upload Body Test</button>
@@ -597,7 +597,8 @@ const bodyTests = [];
 patients.forEach(p => { if (R() < .55) { const c = R() < .3 ? 2 : 1; for (let j = 0; j < c; j++) bodyTests.push({ pid: p.pid, name: p.name, type: "Body Test", code: "BT", cls: "bt", date: new Date(start + R() * span * .98), status: "Available", mine: R() < .75, rid: "\u2014", patient: p }); } });
 // Report Management lists only what this doctor ordered
 bodyTests.forEach(b => { b.rid = makeRid(b.patient.identity, b.date, RID); });
-const myReports = reports.filter(r => r.mine);
+// Report Management = reports this doctor ordered + body tests this doctor uploaded
+const myReports = reports.filter(r => r.mine).concat(bodyTests.filter(b => b.mine));
 
 /* =====================================================================
    State — kept per page so that Back / re-entering restores the view
@@ -763,7 +764,7 @@ function renderReports(){
       '<td><div class="two-line type-cell"><div>' + reportTag(r) + '</div><div class="sec">' + hl(r.rid, toks) + '</div></div></td>' +
       '<td><div class="two-line"><div style="color:var(--text)">' + hl(r.name, toks) + '</div><div class="sec">' + hl(r.pid, toks) + '</div></div></td>' +
       '<td>' + r.patient.identity + '</td><td>' + fmtDate(r.date) + '</td><td>' + statusTag(r.status) + '</td>' +
-      '<td><div class="actions"><button class="btn plain sm" data-act="view"' + (ok ? '' : ' disabled') + '>View</button><button class="btn plain sm icon" data-act="dl" title="' + (r.type === "Omni-Health" ? "Download action plan" : "Download PDF") + '"' + (ok ? '' : ' disabled') + '>' + ICON.download + '</button></div></td></tr>'; }).join("")
+      '<td><div class="actions"><button class="btn plain sm" data-act="view" data-bt="' + (r.type === "Body Test" ? 1 : '') + '"' + (ok ? '' : ' disabled') + '>View</button><button class="btn plain sm icon" data-act="dl" title="' + (r.type === "Omni-Health" ? "Download action plan" : "Download PDF") + '"' + (ok ? '' : ' disabled') + '>' + ICON.download + '</button></div></td></tr>'; }).join("")
     : '<tr><td colspan="6"><div class="empty"><div class="ill">' + ICON.search + '</div>No reports match the current search and filters.<br><button class="link-btn" id="r-reset">Clear search and filters</button></div></td></tr>';
   const filtered = toks.length || Rp.type !== "All" || Rp.status !== "All";
   $("#r-meta").innerHTML = filtered
@@ -791,14 +792,14 @@ function renderReports(){
   markSort($("#page-reports"), Rp);
   renderFoot($("#r-foot"), Rp, total, $("#r-tcard"), renderReports);
   $("#r-body").querySelectorAll("tr.row").forEach(tr => tr.addEventListener("click", () => openDetail(tr.dataset.pid)));
-  $("#r-body").querySelectorAll("[data-act]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); toast(b.dataset.act === "view" ? "Opens the report detail page (unchanged in this prototype)" : "Downloads the file (not wired in this prototype)"); }));
+  $("#r-body").querySelectorAll("[data-act]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); toast(b.dataset.act === "view" ? (b.dataset.bt ? "Opens the body test PDF (not wired in this prototype)" : "Opens the report detail page (unchanged in this prototype)") : "Downloads the file (not wired in this prototype)"); }));
   ft._counts = countByType; fs._counts = countByStatus;
 }
 $("#r-search").addEventListener("input", e => { Rp.q = e.target.value; Rp.page = 1; renderReports(); });
 $("#r-clear").addEventListener("click", () => { Rp.q = ""; $("#r-search").value = ""; Rp.page = 1; renderReports(); $("#r-search").focus(); });
 $("#page-reports").querySelectorAll(".th-btn[data-sort]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.sort; if (Rp.sort.key === k) Rp.sort.dir = Rp.sort.dir === "asc" ? "desc" : "asc"; else Rp.sort = { key: k, dir: k === "date" ? "desc" : "asc" }; Rp.page = 1; renderReports(); }));
 $("#r-f-type").addEventListener("click", e => { e.stopPropagation(); const c = e.currentTarget._counts;
-  openMenu(e.currentTarget, $("#r-tcard"), [["All","All report types"],["Gen-Decoder","Gen-Decoder"],["Epi-Insight","Epi-Insight"],["Omni-Health","Omni-Health"]].map(([v,l]) => ({ label: l, value: v, sel: Rp.type === v, count: c(v) })), v => { Rp.type = v; Rp.page = 1; renderReports(); }, { title: "Filter by report type" }); });
+  openMenu(e.currentTarget, $("#r-tcard"), [["All","All report types"],["Body Test","Body Test"],["Gen-Decoder","Gen-Decoder"],["Epi-Insight","Epi-Insight"],["Omni-Health","Omni-Health"]].map(([v,l]) => ({ label: l, value: v, sel: Rp.type === v, count: c(v) })), v => { Rp.type = v; Rp.page = 1; renderReports(); }, { title: "Filter by report type" }); });
 $("#r-f-status").addEventListener("click", e => { e.stopPropagation(); const c = e.currentTarget._counts;
   openMenu(e.currentTarget, $("#r-tcard"), [["All","All statuses"],["Available","Available"],["In Progress","In Progress"],["Ordered","Ordered"]].map(([v,l]) => ({ label: l, value: v, sel: Rp.status === v, count: c(v) })), v => { Rp.status = v; Rp.page = 1; renderReports(); }, { title: "Filter by status" }); });
 document.querySelectorAll("#r-stats .stat").forEach(s => s.addEventListener("click", () => { const v = s.dataset.status; Rp.status = (v === "All" || Rp.status === v) ? "All" : v; Rp.page = 1; renderReports(); }));
@@ -820,7 +821,7 @@ function openDetail(pid){
     '<td><span class="by">' + (x.mine ? 'You' : ICON.lock + 'Other doctor') + '</span></td>' +
     '<td><span class="rid">' + x.rid + '</span></td>' +
     '<td>' + (x.mine
-      ? '<div class="actions">' + (x.type === "Body Test" ? '' : '<button class="btn plain sm" data-toast="Opens the report detail page (unchanged in this prototype)"' + (canOpen(x) ? '' : ' disabled') + '>View</button>') + '<button class="btn plain sm icon" title="Download" data-toast="Downloads the file (not wired in this prototype)"' + (canOpen(x) ? '' : ' disabled') + '>' + ICON.download + '</button></div>'
+      ? '<div class="actions">' + '<button class="btn plain sm" data-toast="' + (x.type === "Body Test" ? "Opens the body test PDF (not wired in this prototype)" : "Opens the report detail page (unchanged in this prototype)") + '"' + (canOpen(x) ? '' : ' disabled') + '>View</button>' + '<button class="btn plain sm icon" title="Download" data-toast="Downloads the file (not wired in this prototype)"' + (canOpen(x) ? '' : ' disabled') + '>' + ICON.download + '</button></div>'
       : '<span class="locked-note">' + ICON.lock + 'Only the ordering doctor can open this report</span>') + '</td></tr>';
   $("#d-body").innerHTML = '<div class="card p-card"><div class="big-av">' + initials + '</div><div style="flex:1"><div class="p-name">' + esc(p.name) + ' <span class="tag gd">' + p.pid + '</span></div><div class="p-grid">' + info.map(([k, v]) => '<div><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join("") + '</div></div></div>' +
     '<div class="card hist"><div class="hist-head"><div><h3>Report history</h3><div class="hist-sub">Every report on file for this patient, whichever doctor ordered it. You can open the ones you ordered.</div><div class="hist-sum">' + sumChip("Gen-Decoder", "gd", "Gen-Decoder") + sumChip("Epi-Insight", "ei", "Epi-Insight") + sumChip("Omni-Health", "oh", "Omni-Health") + sumChip("Body Test", "bt", "Body Test") + '</div></div>' +
@@ -1033,7 +1034,7 @@ function submitOrder(){
 function finishOrder(uploaded){
   const p = O.p; let btId = O.bt; orderSeq++;
   const when = new Date(TODAY.getTime() + 12 * 3600e3 + orderSeq * 1000);   // today; keeps new orders at the top of the list
-  if (uploaded) { btId = newRid(p.identity); bodyTests.push({ pid: p.pid, name: p.name, type: "Body Test", code: "BT", cls: "bt", date: when, status: "Available", mine: true, rid: btId, patient: p, file: O.file.name }); }
+  if (uploaded) { btId = newRid(p.identity); bodyTests.push({ pid: p.pid, name: p.name, type: "Body Test", code: "BT", cls: "bt", date: when, status: "Available", mine: true, rid: btId, patient: p, file: O.file.name }); myReports.push(bodyTests[bodyTests.length - 1]); }
   O.details.forEach(d => {
     const m = TYPE_META[d.service];
     const r = { pid: p.pid, name: p.name, type: d.service, code: m[0], cls: m[1], date: when, status: "Ordered", patient: p, mine: true, rid: d.reportId,
