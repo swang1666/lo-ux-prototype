@@ -24,6 +24,7 @@ Patient Management / Report Management / Order 的交互原型（1440×1024 画�
 - `index.html` 原型本体（单文件）
 - `screens/` 关键状态截图（列表、搜索、筛选、病人档案、Order 卡片提示与提醒、Order 各步骤；`09` 与 `16` 是同一页面的新旧风格对比）
 - `Manage.png` 当前线上版本的 Figma 参考稿
+- `GEN-DECODER REPORT_order.png`、`EPI_INSIGHT_order.png`、`OMNI_HEALTH_order.png` New UI 里 Order 每行左侧的图片（520 × 316，页面里显示为 260 × 158）。直接覆盖同名文件即可换图；Gen-Decoder + Epi-Insight 那一行用前两张图叠放。
 
 ## 深链接参数（演示用）
 - Patient / Report：`?q=chan&type=Omni-Health&status=Available#reports`、`?gender=Female&open=gender#patients`、`?detail=CL-10127#patients`（病人档案）

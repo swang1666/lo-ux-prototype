@@ -426,10 +426,11 @@ body.nu-on #frame{display:none}
 .nu .sec p{font-size:13px;line-height:18px;color:var(--n-ink-3)}
 .nu .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
 .nu .row{display:flex;min-height:160px;border:1px solid var(--n-line);border-radius:14px;overflow:hidden;background:#fff}
-.nu .media{position:relative;flex:none;width:260px;overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,#FBFAF8 0%,var(--n-panel) 75%);border-right:1px solid var(--n-line-2)}
-.nu .media img{position:absolute;top:20px;left:50%;height:208px;width:auto;transform:translateX(-50%);border-radius:3px;box-shadow:0 1px 2px rgba(23,24,27,.08),0 16px 30px -14px rgba(23,24,27,.42)}
-.nu .media img.l{left:14px;top:26px;height:190px;transform:rotate(-5deg)}
-.nu .media img.r{left:auto;right:14px;top:20px;height:190px;transform:rotate(4deg)}
+.nu .media{position:relative;flex:none;width:260px;overflow:hidden;background:radial-gradient(130% 110% at 0% 0%,#FAFBFF 0%,#E8EDFA 100%)}
+.nu .media > img{display:block;width:100%;height:100%;object-fit:cover}
+.nu .pair img{position:absolute;width:140px;height:85px;object-fit:cover;border-radius:8px;box-shadow:0 0 0 1px rgba(23,24,27,.06),0 10px 22px -10px rgba(23,24,27,.45)}
+.nu .pair img:first-child{left:10px;top:10px}
+.nu .pair img:last-child{right:10px;bottom:10px}
 .nu .rb{flex:1;min-width:0;display:flex;align-items:center;gap:40px;padding:18px 24px 18px 28px}
 .nu .tx{flex:1;min-width:0;max-width:610px}
 .nu .tt{display:flex;align-items:center;gap:10px}
@@ -1239,6 +1240,8 @@ $(".user").addEventListener("click", () => toast("Account page is unchanged in t
 
 /* ---------- New UI preview: the Order showcase restyled, static ---------- */
 const NU_PID = "CL-10127";
+// Row images made for the New UI by the designer (520 x 316, shown at 260 x 158); kept as files so they can be replaced in place
+const NU_IMG = { gd: "GEN-DECODER%20REPORT_order.png", ei: "EPI_INSIGHT_order.png", oh: "OMNI_HEALTH_order.png" };
 const CAP_TEXT = { current: $("#cap-text").innerHTML, new: "<b>Longevity.Omics</b> · New UI preview · Order page only · static mock-up, not clickable" };
 function buildNewUI(){
   const host = $("#frame-nu"); if (host.dataset.built) return; host.dataset.built = "1";
@@ -1258,14 +1261,14 @@ function buildNewUI(){
   const left = k => clinicCredits[k] + " credits left";
   const copy = v => [...ORDER_TESTS, ...ORDER_ANALYSIS].find(c => c.value === v).description.replace("Epi-insight", "Epi-Insight");
   const tests = [
-    { tag: "One-time test", media: '<img src="' + COVER.gd + '" alt="">', title: "Gen-Decoder", text: copy("Gen-Decoder"),
+    { tag: "One-time test", media: '<img src="' + NU_IMG.gd + '" alt="">', title: "Gen-Decoder", text: copy("Gen-Decoder"),
       st: gd ? st("warn", "<b>Already on file</b> \u00b7 " + fmtDate(gd.date) + " \u00b7 " + by(gd)) : st("info", "<b>Not on file yet</b> for this patient"), cost: left("GenDecoder") },
-    { tag: "Repeatable", media: '<img src="' + COVER.ei + '" alt="">', title: "Epi-Insight", text: copy("Epi-Insight"),
+    { tag: "Repeatable", media: '<img src="' + NU_IMG.ei + '" alt="">', title: "Epi-Insight", text: copy("Epi-Insight"),
       st: ei ? st("info", "<b>Last done " + fmtDate(ei.date) + "</b> \u00b7 " + agoText(ei.date)) : st("info", "<b>First test</b> \u00b7 this one becomes the baseline"), cost: left("EpiInsight") },
-    { tag: "2 reports \u00b7 1 sample", media: '<img class="l" src="' + COVER.gd + '" alt=""><img class="r" src="' + COVER.ei + '" alt="">', title: "Gen-Decoder + Epi-Insight", text: copy("Gen-Decoder,Epi-Insight"),
+    { tag: "2 reports \u00b7 1 sample", media: '<div class="pair"><img src="' + NU_IMG.gd + '" alt=""><img src="' + NU_IMG.ei + '" alt=""></div>', title: "Gen-Decoder + Epi-Insight", text: copy("Gen-Decoder,Epi-Insight"),
       st: gd ? st("warn", "<b>Gen-Decoder already on file</b> \u00b7 " + fmtDate(gd.date) + " \u00b7 " + by(gd)) : st("info", "<b>Neither report on file yet</b>"), cost: "GD " + clinicCredits.GenDecoder + " \u00b7 EI " + clinicCredits.EpiInsight + " credits left" }
   ];
-  const omni = { tag: "No sample needed", media: '<img src="' + COVER.oh + '" alt="">', title: "Omni-Health", text: copy("Omni-Health"), cost: left("OmniHealth"),
+  const omni = { tag: "No sample needed", media: '<img src="' + NU_IMG.oh + '" alt="">', title: "Omni-Health", text: copy("Omni-Health"), cost: left("OmniHealth"),
     st: gdA && eiA ? st("ok", "<b>Ready</b> \u00b7 Gen-Decoder " + fmtDate(gdA.date) + " and Epi-Insight " + fmtDate(eiA.date) + " are available") : st("warn", "<b>Needs an available Gen-Decoder and Epi-Insight first</b>") };
   const row = c => '<div class="row"><div class="media">' + c.media + '</div><div class="rb"><div class="tx"><div class="tt"><h3>' + c.title + '</h3><span class="tag">' + c.tag + '</span></div>' +
     '<p>' + esc(c.text) + '</p>' + c.st + '</div><div class="ac"><span class="cost">' + c.cost + '</span>' + cta + '</div></div></div>';
