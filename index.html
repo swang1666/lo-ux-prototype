@@ -113,7 +113,10 @@ body.bare{padding:0}body.bare .stage-cap{display:none}
 .stat.available .n{color:var(--success)} .stat.progress .n{color:var(--warning)} .stat.ordered .n{color:var(--muted)}
 .stat:hover{border-color:#C9D4F5}
 .stat.on{border-color:var(--primary);background:#F7F9FF}
-.stat.on::after{content:"";position:absolute;right:14px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.stat.on::after{content:"";position:absolute;right:14px;bottom:14px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.stat .sub{position:absolute;right:16px;top:20px;max-width:calc(100% - 96px);padding:2px 8px;border-radius:10px;background:var(--disabled-bg);font-size:12px;line-height:16px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.stat .sub b{font-weight:600;color:var(--text)}
+.stat.on .sub{background:#E6ECFB}
 .stats + .search-card{margin-top:24px}
 
 /* ---------- Table card ---------- */
@@ -451,10 +454,10 @@ tr.other .tag{opacity:.75}
         </div>
 
         <div class="stats" id="r-stats">
-          <div class="stat total" data-status="All"><div class="n" id="st-total">0</div><div class="l">Total reports</div></div>
-          <div class="stat available" data-status="Available"><div class="n" id="st-available">0</div><div class="l">Available</div></div>
-          <div class="stat progress" data-status="In Progress"><div class="n" id="st-progress">0</div><div class="l">In progress</div></div>
-          <div class="stat ordered" data-status="Ordered"><div class="n" id="st-ordered">0</div><div class="l">Ordered</div></div>
+          <div class="stat total" data-status="All"><div class="n" id="st-total">0</div><div class="l">Total reports</div><div class="sub" id="st-total-sub" hidden></div></div>
+          <div class="stat available" data-status="Available"><div class="n" id="st-available">0</div><div class="l">Available</div><div class="sub" id="st-available-sub" hidden></div></div>
+          <div class="stat progress" data-status="In Progress"><div class="n" id="st-progress">0</div><div class="l">In progress</div><div class="sub" id="st-progress-sub" hidden></div></div>
+          <div class="stat ordered" data-status="Ordered"><div class="n" id="st-ordered">0</div><div class="l">Ordered</div><div class="sub" id="st-ordered-sub" hidden></div></div>
         </div>
 
         <div class="card search-card">
@@ -775,8 +778,15 @@ function renderReports(){
   $("#r-search-wrap").classList.toggle("has", !!Rp.q);
   const ft = $("#r-f-type"); ft.classList.toggle("on", Rp.type !== "All"); ft.querySelector(".caret").outerHTML = Rp.type !== "All" ? ICON.filter : ICON.caret;
   const fs = $("#r-f-status"); fs.classList.toggle("on", Rp.status !== "All"); fs.querySelector(".caret").outerHTML = Rp.status !== "All" ? ICON.filter : ICON.caret;
-  // stat cards reflect the search + type filter, and act as a status toggle
-  $("#st-total").textContent = countByStatus("All"); $("#st-available").textContent = countByStatus("Available"); $("#st-progress").textContent = countByStatus("In Progress"); $("#st-ordered").textContent = countByStatus("Ordered");
+  // stat cards: the big number is always the doctor's overall total; when a type filter or search is on,
+  // a small chip shows how many of them match it. Clicking a card still toggles the status filter.
+  const overall = s => myReports.filter(r => s === "All" || r.status === s).length;
+  const scope = [Rp.type !== "All" ? Rp.type : "", toks.length ? "“" + Rp.q.trim() + "”" : ""].filter(Boolean).join(" · ");
+  [["total", "All"], ["available", "Available"], ["progress", "In Progress"], ["ordered", "Ordered"]].forEach(([k, s]) => {
+    $("#st-" + k).textContent = overall(s);
+    const sub = $("#st-" + k + "-sub"); sub.hidden = !scope;
+    if (scope) { sub.innerHTML = esc(scope) + ': <b>' + countByStatus(s) + '</b>'; sub.title = scope + ": " + countByStatus(s) + " of " + overall(s); }
+  });
   document.querySelectorAll("#r-stats .stat").forEach(s => s.classList.toggle("on", s.dataset.status === Rp.status && Rp.status !== "All"));
   markSort($("#page-reports"), Rp);
   renderFoot($("#r-foot"), Rp, total, $("#r-tcard"), renderReports);
