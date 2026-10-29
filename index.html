@@ -215,24 +215,9 @@ tr.other .tag{opacity:.75}
 .by svg,.locked-note svg{width:14px;height:14px;flex:none}
 .locked-note{font-size:12px;color:var(--text-3);display:inline-flex;align-items:center;gap:6px}
 .rep-cell{font-size:13px}.rep-cell b{font-weight:500;color:var(--text)}.rep-cell.none{color:var(--text-3)}
-.overlay{position:absolute;left:260px;top:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:80;display:flex;align-items:center;justify-content:center}
-.modal{width:600px;background:#fff;border-radius:6px;box-shadow:0 12px 32px 4px #0000000A,0 8px 20px #00000014;padding:16px}
-.m-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.m-title{font-size:18px;line-height:24px;font-weight:500;color:var(--text)}
-.m-sub{font-size:13px;color:var(--text-2);margin-top:2px}
 .m-close{width:28px;height:28px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center}
 .m-close svg{width:16px;height:16px}
 .m-close:hover{background:var(--hover);color:var(--text)}
-.opts{display:flex;flex-direction:column;gap:10px}
-.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;transition:border-color .15s,background .15s}
-.opt:hover{border-color:#C9D4F5}
-.opt.sel{border-color:var(--primary);background:#F7F9FF}
-.opt .radio{width:16px;height:16px;border-radius:50%;border:1px solid var(--border);margin-top:1px;flex:none;position:relative;background:#fff}
-.opt.sel .radio{border-color:var(--primary);background:var(--primary)}
-.opt.sel .radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#fff}
-.o-name{font-size:14px;font-weight:500;color:var(--text)}
-.o-desc{font-size:12px;line-height:16px;color:var(--text-2);margin-top:2px;max-width:400px}
-.o-have{margin-left:auto;font-size:12px;color:var(--text-2);white-space:nowrap;padding-top:2px}
 .note{margin-top:14px;border-radius:4px;padding:10px 12px;font-size:13px;line-height:18px;display:flex;gap:8px}
 .note b{font-weight:500}
 .note svg{width:16px;height:16px;flex:none;margin-top:1px}
@@ -264,16 +249,24 @@ tr.other .tag{opacity:.75}
 .o-group{font-size:24px;line-height:32px;font-weight:500;color:var(--text)}
 .o-group.analysis{margin-top:32px}
 .o-cards{margin-top:24px;display:flex;flex-wrap:wrap;gap:24px}
-.svc-card{max-width:440px;min-width:360px;overflow:hidden}
+.svc-card{max-width:440px;min-width:360px;overflow:hidden;display:flex;flex-direction:column}
+.svc-card.flash{animation:cardflash 1.8s ease}
+@keyframes cardflash{0%,55%{box-shadow:0 0 0 2px var(--primary),var(--shadow)}100%{box-shadow:var(--shadow)}}
 .svc-card .img{display:flex;align-items:center;justify-content:center;font-size:0;background:#3a35410a;padding:20px 20px 0}
 .svc-card .img img{height:175px;display:block}
 .svc-card .img img.multi{max-width:200px;object-fit:cover}
 .svc-card .img img.rt{object-position:right top}
 .svc-card .img img.lt{object-position:left top}
-.svc-card .bd{display:flex;flex-direction:column;align-items:center;padding:20px}
+.svc-card .bd{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px}
+.svc-card .note{align-self:stretch;margin-top:16px;text-align:left}
+.svc-card .cta{margin-top:auto;padding-top:20px;display:flex;flex-direction:column;align-items:center}
+.svc-card .cred{font-size:12px;line-height:16px;color:var(--text-3)}
 .svc-card h6{margin-top:8px;font-size:20px;line-height:24px;font-weight:500;color:var(--text)}
 .svc-card p{margin-top:8px;text-align:center;font-size:14px;line-height:20px;color:var(--text)}
-.svc-card .btn{margin:28px 0 16px;height:38px;width:144px}
+.svc-card .btn{margin:8px 0 16px;height:38px;width:144px}
+.rm-body{font-size:14px;line-height:20px;color:var(--text)}
+.rm-body .note{margin-top:0}
+.rm-body p{margin-top:12px}
 .o-form{padding:20px}
 .f-sec{margin-bottom:32px}
 .f-sec h6{font-size:20px;line-height:24px;font-weight:500;color:var(--text)}
@@ -670,7 +663,7 @@ function openMenu(anchor, container, items, onPick, opts={}){
 }
 document.addEventListener("click", e => { if (openDD && !openDD.el.contains(e.target) && !openDD.anchor.contains(e.target)) closeDD(); });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { closeDD(); closeOrder(); const a = document.activeElement; if (a && a.tagName === "INPUT") { if (a.value) { a.value = ""; a.dispatchEvent(new Event("input")); } else a.blur(); } }
+  if (e.key === "Escape") { closeDD(); closeReminder(); const a = document.activeElement; if (a && a.tagName === "INPUT") { if (a.value) { a.value = ""; a.dispatchEvent(new Event("input")); } else a.blur(); } }
   if (e.key === "/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) { e.preventDefault(); const inp = state.route === "reports" ? $("#r-search") : $("#p-search"); if (state.route !== "detail") inp.focus(); }
 });
 
@@ -815,7 +808,7 @@ function openDetail(pid){
     '<div class="head-actions"><button class="btn plain" data-toast="\u201cUpload body test\u201d page is unchanged in this prototype">Upload Body Test</button><button class="btn" id="d-new">New Report</button></div></div>' +
     '<table><colgroup><col style="width:160px"><col style="width:150px"><col style="width:140px"><col style="width:160px"><col style="width:170px"><col style="width:320px"></colgroup><thead><tr><th>Report Type</th><th>Collection Date</th><th>Status</th><th>Ordered By</th><th>Report ID</th><th>Action</th></tr></thead><tbody>' +
     (hist.length ? hist.map(hrow).join("") : '<tr><td colspan="6"><div class="empty">No reports on file for this patient yet.</div></td></tr>') + '</tbody></table></div>';
-  $("#d-new").addEventListener("click", () => openOrder(pid));
+  $("#d-new").addEventListener("click", () => { orderReset(); closePicker(); loadPatient(pid); show("order"); });
   $("#d-body").querySelectorAll("[data-toast]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); toast(b.dataset.toast); }));
   const prevSt = state[state.prev]; const bits = [];
   if (prevSt.q) bits.push('search “' + prevSt.q + '”'); if (state.prev === "reports") { if (prevSt.type !== "All") bits.push(prevSt.type); if (prevSt.status !== "All") bits.push(prevSt.status.toLowerCase()); } else if (prevSt.gender !== "All") bits.push(prevSt.gender.toLowerCase());
@@ -824,47 +817,6 @@ function openDetail(pid){
 }
 $("#d-back").addEventListener("click", () => { show(state.prev, true); });
 
-/* ---------- New report: service picker with the re-order rule (Gen-Decoder once, Epi-Insight repeatable) ---------- */
-function openOrder(pid, pre){
-  const p = patients.find(x => x.pid === pid); if (!p) return;
-  const all = reports.filter(r => r.pid === pid);
-  const have = t => all.filter(r => r.type === t).sort((a, b) => b.date - a.date);
-  const monthsAgo = d => Math.max(0, Math.round((TODAY - d) / (30.44 * 864e5)));
-  const who = r => r.mine ? "ordered by you" : "ordered by another doctor";
-  const SVCS = [
-    ["Gen-Decoder", "gd", "Whole-genome report: disease risk, pharmacogenomics and lifestyle. A one-time test, because genetic results do not change."],
-    ["Epi-Insight", "ei", "Epigenetic age and aging-rate report. Meant to be repeated, so change over time can be tracked."],
-    ["Omni-Health", "oh", "Integrated analysis of clinical, genetic and epigenetic profiles with an action plan. Built from the patient\u2019s Gen-Decoder, Epi-Insight and body test."]
-  ];
-  let sel = SVCS.some(x => x[1] === pre) ? pre : "gd";
-  const ov = document.createElement("div"); ov.className = "overlay"; ov.id = "overlay";
-  const render = () => {
-    const svc = SVCS.find(x => x[1] === sel); const prior = have(svc[0]);
-    let note = "", label = "Continue", disabled = false;
-    if (sel === "gd") {
-      if (prior.length) { const r = prior[0]; note = '<div class="note warn">' + ICON.warn + '<div><b>This patient already has a Gen-Decoder report</b> (' + r.status + ' \u00b7 ' + fmtDate(r.date) + ' \u00b7 ' + who(r) + '). Genetic results do not change, so a second test is rarely needed.' + (r.mine ? '' : ' You cannot open that report because another doctor ordered it.') + '</div></div>'; label = "Order anyway"; }
-      else note = '<div class="note info">' + ICON.info + '<div>No Gen-Decoder on file for this patient. This is a one-time test.</div></div>';
-    } else if (sel === "ei") {
-      if (prior.length) { const r = prior[0]; note = '<div class="note info">' + ICON.info + '<div>Last Epi-Insight: ' + fmtDate(r.date) + ' (' + monthsAgo(r.date) + ' months ago \u00b7 ' + r.status + ' \u00b7 ' + who(r) + '). Epigenetic age changes over time, so repeat testing is expected.</div></div>'; }
-      else note = '<div class="note info">' + ICON.info + '<div>No Epi-Insight on file yet. This one will be the patient\u2019s baseline.</div></div>';
-    } else {
-      const gd = have("Gen-Decoder").find(r => r.status === "Available"), ei = have("Epi-Insight").find(r => r.status === "Available");
-      if (gd && ei) note = '<div class="note info">' + ICON.info + '<div>Will link the patient\u2019s latest Gen-Decoder (' + fmtDate(gd.date) + ') and Epi-Insight (' + fmtDate(ei.date) + '). You choose or upload a body test in the next step.</div></div>';
-      else { note = '<div class="note warn">' + ICON.warn + '<div><b>Omni-Health needs an available Gen-Decoder and Epi-Insight report first.</b> This patient is missing ' + (!gd && !ei ? 'both' : !gd ? 'Gen-Decoder' : 'Epi-Insight') + '.</div></div>'; disabled = true; }
-    }
-    ov.innerHTML = '<div class="modal"><div class="m-head"><div><div class="m-title">New report</div><div class="m-sub">for ' + esc(p.name) + ' \u00b7 ' + p.pid + '</div></div><button class="m-close" title="Close">' + ICON.x + '</button></div>' +
-      '<div class="opts">' + SVCS.map(x => { const c = have(x[0]).length; return '<div class="opt' + (x[1] === sel ? ' sel' : '') + '" data-svc="' + x[1] + '"><span class="radio"></span><div><div class="o-name">' + x[0] + '</div><div class="o-desc">' + x[2] + '</div></div><div class="o-have">' + (c ? c + ' on file' : 'none on file') + '</div></div>'; }).join("") + '</div>' + note +
-      '<div class="m-foot"><button class="btn plain" id="o-cancel">Cancel</button><button class="btn" id="o-go"' + (disabled ? ' disabled' : '') + '>' + label + '</button></div></div>';
-    ov.querySelectorAll(".opt").forEach(o => o.addEventListener("click", () => { sel = o.dataset.svc; render(); }));
-    ov.querySelector(".m-close").addEventListener("click", closeOrder);
-    ov.querySelector("#o-cancel").addEventListener("click", closeOrder);
-    ov.querySelector("#o-go").addEventListener("click", () => { closeOrder(); orderReset(); closePicker(); loadPatient(pid); show("order"); chooseService({ gd: "Gen-Decoder", ei: "Epi-Insight", oh: "Omni-Health" }[sel]); });
-  };
-  render();
-  ov.addEventListener("click", e => { if (e.target === ov) closeOrder(); });
-  $("#frame").appendChild(ov);
-}
-function closeOrder(){ const o = $("#overlay"); if (o) o.remove(); }
 
 /* =====================================================================
    Order — rebuilt from the shipped app's order module so the demo has a
@@ -902,25 +854,72 @@ function loadPatient(pid){
   O.p = p; O.country = p.country || ""; O.family = p.family || ""; O.gd = O.ei = O.bt = ""; O.file = null; O.errs = {};
   return true;
 }
-function chooseService(svc){
-  if (!O.p) { toast("Please select patient first"); openPicker(svc); return; }
-  const rs = orderReports();
-  const hasGD = rs.some(r => r.service === "Gen-Decoder"), hasEI = rs.some(r => r.service === "Epi-Insight");
-  // production only blocks when BOTH are missing, and counts reports in any status
-  if (svc === "Omni-Health" && !hasGD && !hasEI) { toast("Please complete Gen-Decoder and Epi-Insight services first before using Omni-Health"); return; }
-  const short = (CREDIT_KEYS[svc] || []).filter(k => clinicCredits[k] < 1).map(k => { const e = Object.entries(CREDIT_KEYS).find(([, v]) => v.length === 1 && v[0] === k); return (e ? e[0] : k) + " (" + clinicCredits[k] + "/1)"; });
-  if (short.length) { toast("Insufficient clinic credits for " + short.join(", ") + ". Please top up credits before placing this order."); return; }
+const CREDIT_NAMES = { GenDecoder: "Gen-Decoder", EpiInsight: "Epi-Insight", OmniHealth: "Omni-Health" };
+function agoText(d){ const days = Math.round((TODAY - d) / 864e5); if (days < 1) return "today"; if (days < 45) return days + (days === 1 ? " day ago" : " days ago"); const m = Math.round(days / 30.44); return m + (m === 1 ? " month ago" : " months ago"); }
+// What a card should say for the selected patient: hint text, whether CONTINUE is blocked, and whether to remind before ordering
+function cardState(value){
+  const keys = CREDIT_KEYS[value] || [];
+  const st = { credit: "Clinic credits left: " + keys.map(k => (keys.length > 1 ? CREDIT_NAMES[k] + " " : "") + clinicCredits[k]).join(" \u00b7 "), tone: "", msg: "", blocked: false, remind: null };
+  const short = keys.filter(k => clinicCredits[k] < 1).map(k => CREDIT_NAMES[k]);
+  if (short.length) { st.tone = "warn"; st.blocked = true; st.msg = "<b>No credits left for " + short.join(" and ") + ".</b> Ask your clinic admin to top up before ordering."; return st; }
+  if (!O.p) return st;
+  const all = reports.filter(r => r.pid === O.p.pid);
+  const latest = (t, availableOnly) => all.filter(r => r.type === t && (!availableOnly || r.status === "Available")).sort((a, b) => b.date - a.date)[0];
+  const who = r => r.mine ? "ordered by you" : "ordered by another doctor";
+  const gd = latest("Gen-Decoder"), ei = latest("Epi-Insight");
+  if (value === "Gen-Decoder" || value === "Gen-Decoder,Epi-Insight") {
+    if (gd) { st.tone = "warn"; st.remind = gd; st.msg = "<b>Gen-Decoder already on file</b> \u00b7 " + gd.status + " \u00b7 " + fmtDate(gd.date) + " \u00b7 " + who(gd) + ". It is a one-time test."; }
+    else if (value === "Gen-Decoder") { st.tone = "info"; st.msg = "No Gen-Decoder on file for this patient."; }
+    else { st.tone = "info"; st.msg = "No Gen-Decoder on file. " + (ei ? "Last Epi-Insight " + fmtDate(ei.date) + ", " + agoText(ei.date) + "." : "No Epi-Insight on file either."); }
+  } else if (value === "Epi-Insight") {
+    st.tone = "info"; st.msg = ei ? "Last Epi-Insight " + fmtDate(ei.date) + " \u00b7 " + agoText(ei.date) + " \u00b7 " + ei.status + ". Repeat testing is expected." : "No Epi-Insight on file yet. This one will be the baseline.";
+  } else if (value === "Omni-Health") {
+    const g = latest("Gen-Decoder", true), e = latest("Epi-Insight", true);
+    if (g && e) { st.tone = "info"; st.msg = "Available on file: Gen-Decoder " + fmtDate(g.date) + " and Epi-Insight " + fmtDate(e.date) + ". You choose which reports to use in the next step."; }
+    else { st.tone = "warn"; st.blocked = true; st.msg = "<b>Needs an available Gen-Decoder and Epi-Insight first.</b> Missing: " + (!g && !e ? "both" : !g ? "Gen-Decoder" : "Epi-Insight") + "."; }
+  }
+  return st;
+}
+function chooseService(svc, confirmed){
+  if (!O.p) { openPicker(svc); return; }   // the showcase stays browsable; a patient is asked for only when ordering
+  const st = cardState(svc);
+  if (st.blocked) { renderOrder(); flashCard(svc); return; }   // the reason is written on the card
+  if (st.remind && !confirmed) { openReminder(svc, st.remind); return; }
   O.details = svc === "Gen-Decoder,Epi-Insight"
     ? [{ reportId: newRid(O.p.identity), service: "Gen-Decoder", type: "Pro" }, { reportId: newRid(O.p.identity), service: "Epi-Insight", type: "" }]
     : [{ reportId: newRid(O.p.identity), service: svc, type: "" }];
   O.step = 1; O.errs = {}; renderOrder(); $("#main").scrollTop = 0;
 }
+function flashCard(svc){
+  const el = document.querySelector('.svc-card[data-card="' + svc + '"]'); if (!el) return;
+  el.scrollIntoView({ block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+}
+// Gen-Decoder is a one-time test: remind, never block
+function openReminder(svc, r){
+  closeReminder();
+  const ov = document.createElement("div"); ov.className = "dlg-ov"; ov.id = "rm-overlay";
+  ov.innerHTML = '<div class="dlg sm" role="dialog" aria-modal="true" aria-labelledby="rm-t"><div class="dlg-h"><span class="dlg-t" id="rm-t">This patient already has a Gen-Decoder report</span><button class="m-close" id="rm-x" title="Close">' + ICON.x + '</button></div>' +
+    '<div class="rm-body"><div class="note warn">' + ICON.warn + '<div>Gen-Decoder \u00b7 ' + r.status + ' \u00b7 ' + fmtDate(r.date) + ' \u00b7 ' + (r.mine ? 'ordered by you' : 'ordered by another doctor') + '</div></div>' +
+    '<p>Genetic results do not change over a lifetime, so a second Gen-Decoder is rarely needed. You can still order one, for example if the patient asks to repeat it.</p>' +
+    (r.mine ? '' : '<p>You cannot open the existing report because another doctor ordered it.</p>') +
+    (svc === "Gen-Decoder,Epi-Insight" ? '<p>If you only need a new Epi-Insight, order it on its own instead of the bundle.</p>' : '') + '</div>' +
+    '<div class="m-foot"><button class="btn plain" id="rm-cancel">Cancel</button><button class="btn" id="rm-go">Order anyway</button></div></div>';
+  $("#frame").appendChild(ov);
+  $("#rm-x").addEventListener("click", closeReminder);
+  $("#rm-cancel").addEventListener("click", closeReminder);
+  $("#rm-go").addEventListener("click", () => { closeReminder(); chooseService(svc, true); });
+  $("#rm-go").focus();
+}
+function closeReminder(){ const o = $("#rm-overlay"); if (o) o.remove(); }
 
 function svcCard(c){
+  const st = cardState(c.value);
   const img = Array.isArray(c.image)
     ? c.image.map((s, i) => '<img class="multi ' + (i % 2 ? 'lt' : 'rt') + '" src="' + s + '" alt="">').join("")
     : '<img src="' + c.image + '" alt="">';
-  return '<div class="card svc-card"><div class="img">' + img + '</div><div class="bd"><h6>' + esc(c.label) + '</h6><p>' + esc(c.description) + '</p><button class="btn" data-svc="' + c.value + '">Continue</button></div></div>';
+  return '<div class="card svc-card" data-card="' + c.value + '"><div class="img">' + img + '</div><div class="bd"><h6>' + esc(c.label) + '</h6><p>' + esc(c.description) + '</p>' +
+    (st.msg ? '<div class="note ' + st.tone + '">' + (st.tone === "warn" ? ICON.warn : ICON.info) + '<div>' + st.msg + '</div></div>' : '') +
+    '<div class="cta"><span class="cred">' + st.credit + '</span><button class="btn" data-svc="' + c.value + '"' + (st.blocked ? ' disabled' : '') + '>Continue</button></div></div></div>';
 }
 function orderServicesHTML(){
   return '<h5 class="o-group">Test</h5><div class="o-cards">' + ORDER_TESTS.map(svcCard).join("") + '</div>' +
@@ -1110,7 +1109,6 @@ if (startRoute === "order") {
   if (qs.get("opick")) openPicker(qs.get("opick") === "1" ? "" : qs.get("opick"));
 }
 if (qs.get("detail")) openDetail(qs.get("detail"));
-if (qs.get("order")) setTimeout(() => openOrder(qs.get("detail"), qs.get("order")), 60);
 if (qs.get("open")) setTimeout(() => $({type: "#r-f-type", status: "#r-f-status", gender: "#p-f-gender", rpp: "#rpp-sel"}[qs.get("open")])?.click(), 50);
 </script>
 </body>
