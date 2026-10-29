@@ -279,7 +279,7 @@ tr.other .tag{opacity:.75}
 .rm-body{font-size:14px;line-height:20px;color:var(--text)}
 .rm-body .note{margin-top:0}
 .rm-body p{margin-top:12px}
-.o-form{padding:20px}
+.o-form{padding:20px;position:relative}
 .f-sec{margin-bottom:32px}
 .f-sec h6{font-size:20px;line-height:24px;font-weight:500;color:var(--text)}
 .f-div{height:1px;background:rgba(138,141,147,.5);margin:24px 0}
@@ -302,6 +302,25 @@ tr.other .tag{opacity:.75}
 .f-in .cal{width:16px;height:16px;flex:none;color:#a8abb2}
 .f-in.err,.upl.err{border-color:#f56c6c}
 .f-err{position:absolute;left:0;top:100%;padding-top:2px;font-size:12px;line-height:1;color:#f56c6c}
+.f-hint{margin-top:4px;font-size:12px;line-height:16px;color:var(--text-3)}
+.f-in.datep{cursor:pointer;color:var(--text)}
+.f-in.datep:hover{border-color:#8A8D93}
+.f-in.datep .cal{color:var(--muted)}
+.cal-pop{width:300px;padding:10px 12px 12px}
+.cal-h{display:flex;align-items:center;gap:2px;margin-bottom:6px}
+.cal-h span{flex:1;text-align:center;font-size:14px;line-height:28px;font-weight:500;color:var(--text)}
+.cal-h button{width:28px;height:28px;border:0;background:none;border-radius:4px;color:#606266;font-size:16px;line-height:1;cursor:pointer}
+.cal-h button:hover:not([disabled]){background:var(--hover);color:var(--primary)}
+.cal-h button[disabled]{color:#C0C4CC;cursor:not-allowed}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}
+.cal-w span{font-size:12px;line-height:28px;color:var(--text-2)}
+.dc{width:32px;height:32px;margin:1px 0;justify-self:center;border:0;border-radius:50%;background:none;font:inherit;font-size:13px;color:#606266;cursor:pointer;font-variant-numeric:tabular-nums}
+.dc:hover:not([disabled]){background:var(--hover);color:var(--primary)}
+.dc.out{color:#C0C4CC}
+.dc.today{color:var(--primary);font-weight:600}
+.dc.on,.dc.on:hover{background:var(--primary);color:#fff;font-weight:500}
+.dc[disabled]{color:#C8CAD0;cursor:not-allowed}
+.dc:focus-visible,.cal-h button:focus-visible{outline:2px solid var(--primary-outlined)}
 .f-ta{display:block;width:100%;min-height:74px;padding:5px 11px;border:1px solid var(--border);border-radius:4px;font:inherit;font-size:14px;line-height:1.5;color:var(--text);resize:vertical;outline:none}
 .f-ta:focus{border-color:var(--primary)}
 .radio-g{display:flex;align-items:center;gap:32px;height:32px}
@@ -644,6 +663,32 @@ document.querySelectorAll("[data-toast]").forEach(b => b.addEventListener("click
 
 let openDD = null;
 function closeDD(){ if (openDD) { openDD.el.remove(); openDD.anchor.classList.remove("open"); openDD = null; } }
+// Small month calendar (DD/MM/YYYY world); dates after today cannot be picked, as in the shipped app's date pickers
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function openCalendar(anchor, container, value, onPick){
+  if (openDD && openDD.anchor === anchor) { closeDD(); return; }
+  closeDD();
+  const same = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  let view = new Date(value.getFullYear(), value.getMonth(), 1);
+  const dd = document.createElement("div"); dd.className = "dd cal-pop";
+  const draw = () => {
+    const y = view.getFullYear(), m = view.getMonth(), lead = new Date(y, m, 1).getDay();
+    let cells = "";
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(y, m, 1 - lead + i), future = d > TODAY;
+      cells += '<button type="button" class="dc' + (d.getMonth() !== m ? ' out' : '') + (same(d, TODAY) ? ' today' : '') + (same(d, value) ? ' on' : '') + '" data-t="' + d.getTime() + '"' + (future ? ' disabled' : '') + '>' + d.getDate() + '</button>';
+    }
+    dd.innerHTML = '<div class="cal-h"><button type="button" data-nav="-12" title="Previous year">\u00ab</button><button type="button" data-nav="-1" title="Previous month">\u2039</button><span>' + MONTHS[m] + ' ' + y + '</span>' +
+      '<button type="button" data-nav="1" title="Next month"' + (new Date(y, m + 1, 1) > TODAY ? ' disabled' : '') + '>\u203a</button><button type="button" data-nav="12" title="Next year"' + (new Date(y + 1, m, 1) > TODAY ? ' disabled' : '') + '>\u00bb</button></div>' +
+      '<div class="cal-w">' + ["Su","Mo","Tu","We","Th","Fr","Sa"].map(w => '<span>' + w + '</span>').join("") + '</div><div class="cal-g">' + cells + '</div>';
+    dd.querySelectorAll("[data-nav]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); view = new Date(y, m + (+b.dataset.nav), 1); draw(); }));
+    dd.querySelectorAll(".dc:not([disabled])").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); closeDD(); onPick(new Date(+b.dataset.t)); }));
+  };
+  draw(); container.appendChild(dd);
+  const a = anchor.getBoundingClientRect(), c = container.getBoundingClientRect();
+  dd.style.left = (a.left - c.left) + "px"; dd.style.top = (a.bottom - c.top + 4) + "px";
+  anchor.classList.add("open"); openDD = { el: dd, anchor };
+}
 function openMenu(anchor, container, items, onPick, opts={}){
   if (openDD && openDD.anchor === anchor) { closeDD(); return; }
   closeDD();
@@ -860,7 +905,7 @@ const newRid = identity => makeRid(identity, TODAY, Math.random);
 let orderSeq = 0;
 
 const O = {};
-function orderReset(){ Object.assign(O, { step: 0, p: null, details: [], country: "", family: "", gd: "", ei: "", btMode: "select", bt: "", file: null, errs: {}, pending: "", busy: false }); }
+function orderReset(){ Object.assign(O, { step: 0, p: null, details: [], collect: null, country: "", family: "", gd: "", ei: "", btMode: "select", bt: "", file: null, errs: {}, pending: "", busy: false }); }
 orderReset();
 // Every report on file for the patient (any doctor, any status), plus body tests — same source the shipped app uses
 function orderReports(){
@@ -908,6 +953,7 @@ function chooseService(svc, confirmed){
   O.details = svc === "Gen-Decoder,Epi-Insight"
     ? [{ reportId: newRid(O.p.identity), service: "Gen-Decoder", type: "Pro" }, { reportId: newRid(O.p.identity), service: "Epi-Insight", type: "" }]
     : [{ reportId: newRid(O.p.identity), service: svc, type: "" }];
+  O.collect = new Date(TODAY);   // Collection Date defaults to today
   O.step = 1; O.errs = {}; renderOrder(); $("#main").scrollTop = 0;
 }
 function flashCard(svc){
@@ -956,7 +1002,11 @@ function orderFormHTML(){
   const p = O.p, isOmni = O.details.some(d => d.service === "Omni-Health");
   const rs = orderReports(), lab = id => { const r = rs.find(x => x.id === id); return r ? r.service + "  " + fmtDate(r.date) : ""; };
   let h = '<div class="card o-form"><div class="f-sec"><h6>Service Information</h6><div class="f-div"></div>' +
-    O.details.map(d => '<div class="f-row">' + fld("Report ID", false, fDis(d.reportId)) + fld("Service", false, fDis(d.service)) + '</div>').join("") + '</div>';
+    O.details.map(d => '<div class="f-row">' + fld("Report ID", false, fDis(d.reportId)) + fld("Service", false, fDis(d.service)) + '</div>').join("") +
+    (isOmni
+      ? '<div class="f-row">' + fld("Created Date", false, '<div class="f-in dis">' + ICON.cal + esc(fmtDate(TODAY)) + '</div><div class="f-hint">No sample is collected for Omni-Health, so its date is the day the order is created.</div>') + '<div class="f-col"></div></div>'
+      : '<div class="f-row">' + fld("Collection Date", true, '<div class="f-in datep' + (O.errs.collect ? ' err' : '') + '" id="o-collect" tabindex="0" role="button" aria-label="Collection date">' + ICON.cal + '<span>' + (O.collect ? fmtDate(O.collect) : '') + '</span></div><div class="f-hint">The day the blood sample is taken. Defaults to today.</div>', "collect") + '<div class="f-col"></div></div>') +
+    '</div>';
   h += '<div class="f-sec"><h6>Patient Information</h6><div class="f-div"></div>' +
     '<div class="f-row">' + fld("First Name", true, fDis(p.first)) + fld("Last Name", true, fDis(p.last)) + '</div>' +
     '<div class="f-row">' + fld("Gender", true, fPick("", p.gender, "", "", true)) + fld("Date of Birth", true, '<div class="f-in dis">' + ICON.cal + esc(fmtDate(p.dob)) + '</div>') + '</div>' +
@@ -995,6 +1045,11 @@ function bindOrderForm(){
   const bindPick = (id, key, items, opts) => { const el = $("#" + id); if (!el) return;
     el.addEventListener("click", e => { e.stopPropagation(); openMenu(el, card, items().map(it => Object.assign(it, { sel: it.value === O[key] })), v => { O[key] = v; delete O.errs[key]; renderOrder(); }, Object.assign({ field: true, empty: "No data" }, opts || {})); }); };
   const reportItems = svc => () => rs.filter(r => r.service === svc).map(r => ({ label: svc + "  " + fmtDate(r.date), value: r.id }));
+  const oc = $("#o-collect");
+  if (oc) {
+    const pickDate = e => { e.stopPropagation(); openCalendar(oc, card, O.collect || TODAY, d => { O.collect = d; delete O.errs.collect; renderOrder(); }); };
+    oc.addEventListener("click", pickDate); oc.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pickDate(e); } });
+  }
   bindPick("o-country", "country", () => ORDER_COUNTRIES.map(c => ({ label: c, value: c })), { filter: true });
   bindPick("o-gd", "gd", reportItems("Gen-Decoder")); bindPick("o-ei", "ei", reportItems("Epi-Insight")); bindPick("o-bt", "bt", reportItems("Body Test"));
   $("#o-family").addEventListener("input", e => { O.family = e.target.value; });
@@ -1020,6 +1075,7 @@ function takeFile(f){
 function submitOrder(){
   if (O.busy) return;
   const isOmni = O.details.some(d => d.service === "Omni-Health"); O.errs = {};
+  if (!isOmni && !O.collect) O.errs.collect = "Please select collection date";
   if (isOmni) {
     if (!O.gd) O.errs.gd = "Please select Gen-Decoder report";
     if (!O.ei) O.errs.ei = "Please select Epi-Insight report";
@@ -1037,7 +1093,9 @@ function finishOrder(uploaded){
   if (uploaded) { btId = newRid(p.identity); bodyTests.push({ pid: p.pid, name: p.name, type: "Body Test", code: "BT", cls: "bt", date: when, status: "Available", mine: true, rid: btId, patient: p, file: O.file.name }); myReports.push(bodyTests[bodyTests.length - 1]); }
   O.details.forEach(d => {
     const m = TYPE_META[d.service];
-    const r = { pid: p.pid, name: p.name, type: d.service, code: m[0], cls: m[1], date: when, status: "Ordered", patient: p, mine: true, rid: d.reportId,
+    // tests are dated by the sample's collection date; Omni-Health by the day it is created
+    const date = d.service === "Omni-Health" || !O.collect ? when : new Date(O.collect.getTime() + 12 * 3600e3 + orderSeq * 1000);
+    const r = { pid: p.pid, name: p.name, type: d.service, code: m[0], cls: m[1], date, status: "Ordered", patient: p, mine: true, rid: d.reportId,
                 sources: d.service === "Omni-Health" ? { gd: O.gd, ei: O.ei, bt: btId } : null };
     reports.push(r); myReports.push(r);
     (CREDIT_KEYS[d.service] || []).forEach(k => clinicCredits[k]--);
