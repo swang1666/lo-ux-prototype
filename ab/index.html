@@ -1242,6 +1242,16 @@ table.edesc{table-layout:auto}
 .ev-sec + .ev-desc{margin-top:4px}
 .ev-sec{margin-top:14px;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--n-ink-3)}
 .ev-refs{margin:6px 0 0;padding:0;list-style:none}
+/* round 20: evidence popover (layout B) */
+.ev-pop{position:absolute;z-index:95;width:440px;max-height:60%;display:flex;flex-direction:column;padding:12px 16px 14px;border:1px solid var(--n-line);border-radius:12px;background:#fff;box-shadow:0 16px 40px -12px rgba(23,24,27,.28)}
+.ev-pop .ev-body{min-height:0;overflow:auto;padding-right:4px}
+.ev-pop-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;line-height:20px}
+.ev-pop-h b{font-weight:600;color:var(--n-ink)}
+.ev-pop-x{display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;border:0;border-radius:6px;background:none;color:var(--n-ink-3);cursor:pointer}
+.ev-pop-x:hover{background:var(--n-panel);color:var(--n-ink)}
+.ev-pop-x svg{width:14px;height:14px}
+.ev-arrow{position:absolute;top:-6px;width:10px;height:10px;background:#fff;border-left:1px solid var(--n-line);border-top:1px solid var(--n-line);transform:rotate(45deg)}
+.ev-pop.up .ev-arrow{top:auto;bottom:-6px;border-left:0;border-top:0;border-right:1px solid var(--n-line);border-bottom:1px solid var(--n-line)}
 /* round 18: evidence dialog */
 #frame.ui-new .dlg.ev-dlg{width:640px;max-height:calc(100% - 184px);display:flex;flex-direction:column}
 #frame.ui-new .ev-dlg .dlg-h{padding-bottom:4px}
@@ -1800,6 +1810,7 @@ function initPdf(svc, r){
 
 /* interpretation panel: QSwitch tabs, EDIT / SAVE / EXPORT, one renderer per tab component */
 function renderInterp(){
+  if (typeof closeEvidence === "function") closeEvidence();
   if (isNew()) { renderInterpNU(); return; }
   const svc = RD.r ? RD.r.type : SAMPLE_OF[RD.sample], tabs = TAB_LIST[svc], data = RD.data, t = RD.tab;
   const canEdit = EDIT_TABS.includes(t) && data[t];
@@ -1839,10 +1850,10 @@ function renderTab(){
   body.querySelectorAll(".fold-h").forEach(b => b.addEventListener("click", () => b.parentElement.classList.toggle("open")));
   body.querySelectorAll("[data-pg]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); if (PDF.go) PDF.go(+b.dataset.pg); }));
   const q = body.querySelector("#ph-q"); if (q) q.addEventListener("input", () => phFilter(body, q.value));
-  body.querySelectorAll(".ev-tag").forEach(t => t.addEventListener("click", e => { e.stopPropagation(); openEvidence(t.dataset.ev); }));
+  body.querySelectorAll(".ev-tag").forEach(t => t.addEventListener("click", e => { e.stopPropagation(); openEvidence(t.dataset.ev, t); }));
   body.querySelectorAll("[data-dz]").forEach(b => b.addEventListener("click", () => { const el = body.querySelector("#dz-c" + b.dataset.dz); if (!el) return; const col = el.closest(".ecol-i"); if (col) col.classList.add("on"); body.scrollTo({ top: body.scrollTop + el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8, behavior: "smooth" }); }));
   body.querySelectorAll("[data-pillar]").forEach(c => c.addEventListener("click", () => { const i = +c.dataset.pillar;
-    if (apMode() === "tabs") { AP.tab = i; body.querySelectorAll("[data-pillar]").forEach(x => x.classList.toggle("on", +x.dataset.pillar === i)); body.querySelectorAll(".ap-card").forEach((x, k) => { if (k === i) x.removeAttribute("hidden"); else x.setAttribute("hidden", ""); }); return; }
+    if (apMode() === "tabs") { closeEvidence(); AP.tab = i; body.querySelectorAll("[data-pillar]").forEach(x => x.classList.toggle("on", +x.dataset.pillar === i)); body.querySelectorAll(".ap-card").forEach((x, k) => { if (k === i) x.removeAttribute("hidden"); else x.setAttribute("hidden", ""); }); return; }
     const el = body.querySelector("#ap-p-" + i); if (el) body.scrollTo({ top: body.scrollTop + el.getBoundingClientRect().top - body.getBoundingClientRect().top - 8, behavior: "smooth" }); }));
   body.querySelectorAll("[data-ap]").forEach(b => b.addEventListener("click", () => { apSetMode(b.dataset.ap); renderInterp(); }));
   body.querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); const path = b.dataset.rm.split("."), i = +path.pop(); path.reduce((o, k) => o[k], d).splice(i, 1); renderTab(); }));
@@ -1981,8 +1992,9 @@ function evLine(text){
 const evBody = e => '<div class="ev-meta">Based on ' + evCount(e) + (e.dose ? ' · Dose in studies: ' + esc(e.dose) : '') + '</div>' +
   '<div class="ev-sec">Summary</div><p class="ev-desc">' + esc(e.summary || "") + '</p>' +
   '<div class="ev-sec">Related papers</div><ol class="ev-refs">' + (e.papers || []).map((r, i) => '<li><span class="num">' + (i + 1) + '</span><span><b>' + esc(r.authors) + ', ' + r.year + '.</b> <span class="t">' + esc(r.title) + '</span> <span class="j">' + esc(r.journal) + ' · ' + r.date + '</span></span>' + (r.url ? '<a href="' + r.url + '" target="_blank" rel="noopener" title="Open the paper">' + IC.link + '</a>' : '') + '</li>').join("") + '</ol>';
-function openEvidence(id){
+function openEvidence(id, anchor){
   closeEvidence(); const e = (window.LE_EVIDENCE || []).find(x => x.id === id); if (!e) return;
+  if (apMode() === "tabs" && anchor) return openEvidencePop(e, anchor);   // layout B: popover on the tag
   const ov = document.createElement("div"); ov.className = "dlg-ov"; ov.id = "ev-overlay";
   ov.innerHTML = '<div class="dlg sm ev-dlg" role="dialog" aria-modal="true" aria-labelledby="ev-t"><div class="dlg-h"><span class="dlg-t nu-keep" id="ev-t">' + esc(e.name) + '</span><button class="m-close" id="ev-x" title="Close">' + ICON.x + '</button></div><div class="ev-body">' + evBody(e) + '</div></div>';
   $("#frame").appendChild(ov);
@@ -1990,7 +2002,34 @@ function openEvidence(id){
   ov.addEventListener("click", ev => { if (ev.target === ov) closeEvidence(); });
   $("#ev-x").focus();
 }
-function closeEvidence(){ const o = $("#ev-overlay"); if (o) o.remove(); }
+// layout B: the same content as a popover anchored to the tag
+const EVP = { el: null, anchor: null, onDoc: null, onScroll: null };
+function openEvidencePop(e, anchor){
+  const pop = document.createElement("div"); pop.className = "ev-pop"; pop.id = "ev-pop";
+  pop.innerHTML = '<i class="ev-arrow"></i><div class="ev-pop-h"><b class="nu-keep">' + esc(e.name) + '</b><button type="button" class="ev-pop-x" title="Close">' + ICON.x + '</button></div><div class="ev-body">' + evBody(e) + '</div>';
+  $("#frame").appendChild(pop); EVP.el = pop; EVP.anchor = anchor;
+  pop.querySelector(".ev-pop-x").addEventListener("click", closeEvidence);
+  evPlace();
+  EVP.onDoc = ev => { if (!pop.contains(ev.target) && !anchor.contains(ev.target)) closeEvidence(); };
+  EVP.onScroll = () => evPlace();
+  setTimeout(() => document.addEventListener("mousedown", EVP.onDoc), 0);
+  const body = $("#ip-body"); if (body) body.addEventListener("scroll", EVP.onScroll);
+}
+function evPlace(){
+  const pop = EVP.el, a = EVP.anchor; if (!pop || !a) return;
+  if (!document.contains(a)) { closeEvidence(); return; }
+  const f = $("#frame").getBoundingClientRect(), r = a.getBoundingClientRect(), body = $("#ip-body"), pb = body ? body.getBoundingClientRect() : f;
+  if (r.bottom < pb.top || r.top > pb.bottom) { closeEvidence(); return; }   // the tag scrolled out of the panel
+  const W = pop.offsetWidth, H = pop.offsetHeight, gap = 8;
+  let left = r.left - f.left; left = Math.max(12, Math.min(left, f.width - W - 12));
+  const below = r.bottom - f.top + gap, above = r.top - f.top - gap - H, flip = below + H > f.height - 12 && above > 12;
+  pop.style.left = left + "px"; pop.style.top = (flip ? above : below) + "px"; pop.classList.toggle("up", flip);
+  pop.querySelector(".ev-arrow").style.left = Math.max(12, Math.min(W - 24, r.left - f.left - left + Math.min(r.width / 2, 20) - 6)) + "px";
+}
+function closeEvidence(){
+  const o = $("#ev-overlay"); if (o) o.remove();
+  if (EVP.el) { EVP.el.remove(); EVP.el = null; EVP.anchor = null; document.removeEventListener("mousedown", EVP.onDoc); const body = $("#ip-body"); if (body) body.removeEventListener("scroll", EVP.onScroll); }
+}
 const TAB_RENDER = {
   disease(d){
     d = d || { categories: [] }; if (!d.categories || !d.categories.length) return gen("Disease Data Not Available", "disease");
