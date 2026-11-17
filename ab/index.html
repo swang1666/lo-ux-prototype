@@ -1242,7 +1242,7 @@ table.edesc{table-layout:auto}
 .ev-sec + .ev-desc{margin-top:4px}
 .ev-sec{margin-top:14px;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--n-ink-3)}
 .ev-refs{margin:6px 0 0;padding:0;list-style:none}
-/* round 20: evidence popover (layout B) */
+/* round 20: evidence popover */
 .ev-pop{position:absolute;z-index:95;width:440px;max-height:60%;display:flex;flex-direction:column;padding:12px 16px 14px;border:1px solid var(--n-line);border-radius:12px;background:#fff;box-shadow:0 16px 40px -12px rgba(23,24,27,.28)}
 .ev-pop .ev-body{min-height:0;overflow:auto;padding-right:4px}
 .ev-pop-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;line-height:20px}
@@ -1252,7 +1252,7 @@ table.edesc{table-layout:auto}
 .ev-pop-x svg{width:14px;height:14px}
 .ev-arrow{position:absolute;top:-6px;width:10px;height:10px;background:#fff;border-left:1px solid var(--n-line);border-top:1px solid var(--n-line);transform:rotate(45deg)}
 .ev-pop.up .ev-arrow{top:auto;bottom:-6px;border-left:0;border-top:0;border-right:1px solid var(--n-line);border-bottom:1px solid var(--n-line)}
-/* round 18: evidence dialog */
+/* round 18: evidence dialog (fallback only) */
 #frame.ui-new .dlg.ev-dlg{width:640px;max-height:calc(100% - 184px);display:flex;flex-direction:column}
 #frame.ui-new .ev-dlg .dlg-h{padding-bottom:4px}
 #frame.ui-new .ev-dlg .ev-body{min-height:0;overflow:auto;padding-right:4px}
@@ -1994,7 +1994,7 @@ const evBody = e => '<div class="ev-meta">Based on ' + evCount(e) + (e.dose ? ' 
   '<div class="ev-sec">Related papers</div><ol class="ev-refs">' + (e.papers || []).map((r, i) => '<li><span class="num">' + (i + 1) + '</span><span><b>' + esc(r.authors) + ', ' + r.year + '.</b> <span class="t">' + esc(r.title) + '</span> <span class="j">' + esc(r.journal) + ' · ' + r.date + '</span></span>' + (r.url ? '<a href="' + r.url + '" target="_blank" rel="noopener" title="Open the paper">' + IC.link + '</a>' : '') + '</li>').join("") + '</ol>';
 function openEvidence(id, anchor){
   closeEvidence(); const e = (window.LE_EVIDENCE || []).find(x => x.id === id); if (!e) return;
-  if (apMode() === "tabs" && anchor) return openEvidencePop(e, anchor);   // layout B: popover on the tag
+  if (anchor) return openEvidencePop(e, anchor);   // decided 16 Nov 2026: popover on the tag; the dialog below is only a fallback without an anchor
   const ov = document.createElement("div"); ov.className = "dlg-ov"; ov.id = "ev-overlay";
   ov.innerHTML = '<div class="dlg sm ev-dlg" role="dialog" aria-modal="true" aria-labelledby="ev-t"><div class="dlg-h"><span class="dlg-t nu-keep" id="ev-t">' + esc(e.name) + '</span><button class="m-close" id="ev-x" title="Close">' + ICON.x + '</button></div><div class="ev-body">' + evBody(e) + '</div></div>';
   $("#frame").appendChild(ov);
@@ -2002,12 +2002,13 @@ function openEvidence(id, anchor){
   ov.addEventListener("click", ev => { if (ev.target === ov) closeEvidence(); });
   $("#ev-x").focus();
 }
-// layout B: the same content as a popover anchored to the tag
+// the evidence popover anchored to the tag (the decided form)
 const EVP = { el: null, anchor: null, onDoc: null, onScroll: null };
 function openEvidencePop(e, anchor){
   const pop = document.createElement("div"); pop.className = "ev-pop"; pop.id = "ev-pop";
   pop.innerHTML = '<i class="ev-arrow"></i><div class="ev-pop-h"><b class="nu-keep">' + esc(e.name) + '</b><button type="button" class="ev-pop-x" title="Close">' + ICON.x + '</button></div><div class="ev-body">' + evBody(e) + '</div>';
   $("#frame").appendChild(pop); EVP.el = pop; EVP.anchor = anchor;
+  const ipb = $("#ip-body"); if (ipb) { const r = anchor.getBoundingClientRect(), pb = ipb.getBoundingClientRect(); if (r.top < pb.top || r.bottom > pb.bottom) anchor.scrollIntoView({ block: "center" }); }   // a tag outside the panel view scrolls into view first
   pop.querySelector(".ev-pop-x").addEventListener("click", closeEvidence);
   evPlace();
   EVP.onDoc = ev => { if (!pop.contains(ev.target) && !anchor.contains(ev.target)) closeEvidence(); };
